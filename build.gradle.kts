@@ -27,6 +27,7 @@ buildscript {
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     application
+    idea
 
     id("application")
     id("java")

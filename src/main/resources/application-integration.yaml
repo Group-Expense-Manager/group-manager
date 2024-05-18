@@ -2,7 +2,7 @@ wiremock:
   server:
     port: 9999
 
-example-client:
+currency-manager:
   url: http://localhost:${wiremock.server.port}
   read-timeout: 1000ms
   connect-timeout: 1000ms
