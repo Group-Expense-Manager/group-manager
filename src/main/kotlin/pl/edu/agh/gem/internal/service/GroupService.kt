@@ -35,6 +35,10 @@ class GroupService(
         return groupRepository.save(group.withMember(userId))
     }
 
+    fun getGroup(groupId: String): Group {
+        return groupRepository.findById(groupId) ?: throw MissingGroupException(groupId)
+    }
+
     private fun createGroupDataWrapper(group: Group): GroupDataWrapper {
         return GroupDataWrapper(group, currencyManagerClient.getCurrencies())
     }

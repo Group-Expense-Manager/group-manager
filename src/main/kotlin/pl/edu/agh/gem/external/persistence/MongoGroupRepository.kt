@@ -29,6 +29,10 @@ class MongoGroupRepository(
         return mongo.save(group.toEntity()).toDomain()
     }
 
+    override fun findById(groupId: String): Group? {
+        return mongo.findById(groupId, GroupEntity::class.java)?.toDomain()
+    }
+
     private fun insertWithUniqueJoinCode(groupEntity: GroupEntity): Group {
         return try {
             mongo.insert(groupEntity).toDomain()
