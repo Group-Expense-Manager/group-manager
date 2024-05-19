@@ -2,6 +2,8 @@ package pl.edu.agh.gem.external.controller
 
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.OK
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,5 +36,14 @@ class GroupController(
         return groupService.createGroup(
             groupCreationRequest.toDomain(userId, codeGenerator.generateJoinCode()),
         ).toGroupCreationResponse()
+    }
+
+    @PostMapping("/join/{joinCode}")
+    @ResponseStatus(OK)
+    fun joinGroup(
+        @GemUserId userId: String,
+        @PathVariable joinCode: String,
+    ) {
+        groupService.joinGroup(joinCode, userId)
     }
 }
