@@ -27,10 +27,10 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
             .exchange()
     }
 
-    fun joinGroup(joinCode:String, user: GemUser): ResponseSpec {
+    fun joinGroup(joinCode: String, user: GemUser): ResponseSpec {
         return webClient.post()
-                .uri(URI("$EXTERNAL/groups/join/$joinCode"))
-                .headers { it.withValidatedUser(user) }
-                .exchange()
+            .uri(URI("$EXTERNAL/groups/join/$joinCode"))
+            .headers { it.withValidatedUser(user) }
+            .exchange()
     }
 }

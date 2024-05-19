@@ -3,17 +3,15 @@ package pl.edu.agh.gem.integration.controler
 import io.kotest.datatest.withData
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.collections.shouldNotContainDuplicates
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import org.apache.kafka.common.errors.GroupNotEmptyException
 import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.CREATED
-import org.springframework.http.HttpStatus.OK
-import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.CONFLICT
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.OK
 import pl.edu.agh.gem.assertion.shouldBody
 import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
@@ -103,7 +101,6 @@ class GroupControllerIT(
         response shouldHaveValidatorError BASE_CURRENCY_NOT_SUPPORTED
     }
 
-
     should("join group successfully") {
         // given
         val user = createGemUser()
@@ -115,7 +112,7 @@ class GroupControllerIT(
 
         // then
         response shouldHaveHttpStatus OK
-        groupRepository.findByJoinCode(group.joinCode).apply { 
+        groupRepository.findByJoinCode(group.joinCode).apply {
             shouldNotBeNull()
             members.map { member -> member.userId }.shouldContain(user.id)
         }
