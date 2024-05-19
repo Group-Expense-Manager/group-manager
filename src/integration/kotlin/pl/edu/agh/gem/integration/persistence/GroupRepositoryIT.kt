@@ -14,7 +14,7 @@ class GroupRepositoryIT(
         val group = createGroup()
 
         // when
-        val result = groupRepository.saveWithUniqueJoinCode(group)
+        val result = groupRepository.insertWithUniqueJoinCode(group)
 
         // then
         result.shouldBe(group)
@@ -24,10 +24,10 @@ class GroupRepositoryIT(
         // given
         val group = createGroup(id = "group", joinCode = "joinCode")
         val otherGroup = createGroup(id = "otherGroupId", joinCode = "joinCode")
-        groupRepository.saveWithUniqueJoinCode(otherGroup)
+        groupRepository.insertWithUniqueJoinCode(otherGroup)
 
         // when
-        val result = groupRepository.saveWithUniqueJoinCode(group)
+        val result = groupRepository.insertWithUniqueJoinCode(group)
 
         // then
         result.joinCode shouldNotBe group.joinCode

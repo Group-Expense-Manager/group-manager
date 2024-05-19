@@ -24,13 +24,13 @@ class GroupServiceTest : ShouldSpec({
         val group = createGroup()
         val currencies = listOf("USD", "EUR", "PLN").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
-        whenever(groupRepository.saveWithUniqueJoinCode(group)).thenReturn(group)
+        whenever(groupRepository.insertWithUniqueJoinCode(group)).thenReturn(group)
 
         // when
         val result = groupService.createGroup(group)
 
         // then
-        verify(groupRepository, times(1)).saveWithUniqueJoinCode(group)
+        verify(groupRepository, times(1)).insertWithUniqueJoinCode(group)
         result shouldBe group
     }
 
@@ -44,6 +44,6 @@ class GroupServiceTest : ShouldSpec({
         shouldThrow<ValidatorsException> {
             groupService.createGroup(group)
         }
-        verify(groupRepository, times(0)).saveWithUniqueJoinCode(group)
+        verify(groupRepository, times(0)).insertWithUniqueJoinCode(group)
     }
 },)

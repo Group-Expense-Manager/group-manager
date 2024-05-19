@@ -12,17 +12,17 @@ class MongoGroupRepository(
     private val mongo: MongoTemplate,
     private val codeGenerator: CodeGenerator,
 ) : GroupRepository {
-    override fun saveWithUniqueJoinCode(group: Group): Group {
+    override fun insertWithUniqueJoinCode(group: Group): Group {
         val groupEntity = group.toEntity()
-        return saveWithUniqueJoinCode(groupEntity)
+        return insertWithUniqueJoinCode(groupEntity)
     }
 
-    private fun saveWithUniqueJoinCode(groupEntity: GroupEntity): Group {
+    private fun insertWithUniqueJoinCode(groupEntity: GroupEntity): Group {
         return try {
-            mongo.save(groupEntity).toDomain()
+            mongo.insert(groupEntity).toDomain()
         } catch (e: DuplicateKeyException) {
             val newGroupEntity = groupEntity.copy(joinCode = codeGenerator.generateJoinCode())
-            saveWithUniqueJoinCode(newGroupEntity)
+            insertWithUniqueJoinCode(newGroupEntity)
         }
     }
 }

@@ -25,7 +25,7 @@ class GroupService(
                 it.isNotEmpty()
             }
             ?.also { throw ValidatorsException(it) }
-        return groupRepository.saveWithUniqueJoinCode(group)
+        return groupRepository.insertWithUniqueJoinCode(group)
     }
 
     private fun createGroupDataWrapper(group: Group): GroupDataWrapper {
