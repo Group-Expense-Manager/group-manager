@@ -37,7 +37,7 @@ fun Group.toEntity() = GroupEntity(
     ownerId = ownerId,
     members = members.map { it.toEntity() },
     acceptRequired = acceptRequired,
-    baseCurrency = baseCurrency.map { it.toEntity() },
+    baseCurrency = groupCurrencies.map { it.toEntity() },
     joinCode = joinCode,
     attachmentId = attachmentId,
 )
@@ -57,7 +57,7 @@ fun GroupEntity.toDomain() = Group(
     ownerId = ownerId,
     members = members.map { it.toDomain() },
     acceptRequired = acceptRequired,
-    baseCurrency = baseCurrency.map { it.toDomain() },
+    groupCurrencies = baseCurrency.map { it.toDomain() },
     joinCode = joinCode,
     attachmentId = attachmentId,
 )
