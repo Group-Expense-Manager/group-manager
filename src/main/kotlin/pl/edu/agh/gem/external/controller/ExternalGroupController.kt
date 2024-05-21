@@ -21,7 +21,7 @@ import pl.edu.agh.gem.security.GemUserId
 
 @RestController
 @RequestMapping("$EXTERNAL/groups")
-class GroupController(
+class ExternalGroupController(
     private val groupService: GroupService,
     private val codeGenerator: CodeGenerator,
 ) {
