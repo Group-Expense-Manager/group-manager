@@ -44,7 +44,7 @@ fun GroupCreationRequest.toDomain(ownerId: String, joinCode: String) =
         ownerId = ownerId,
         members = listOf(Member(ownerId)),
         acceptRequired = acceptRequired,
-        baseCurrency = listOf(Currency(baseCurrency)),
+        groupCurrencies = listOf(Currency(baseCurrency)),
         joinCode = joinCode,
         attachmentId = attachmentId,
     )

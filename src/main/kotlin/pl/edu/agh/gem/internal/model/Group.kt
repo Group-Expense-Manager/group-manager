@@ -7,7 +7,7 @@ data class Group(
     val ownerId: String,
     val members: Members,
     val acceptRequired: Boolean,
-    val baseCurrency: Currencies,
+    val groupCurrencies: Currencies,
     val joinCode: String,
     val attachmentId: String,
 )
