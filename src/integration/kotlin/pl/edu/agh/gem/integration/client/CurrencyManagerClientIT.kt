@@ -14,7 +14,7 @@ import pl.edu.agh.gem.util.createCurrencyResponse
 class CurrencyManagerClientIT(
     private val currencyManagerClient: CurrencyManagerClient,
 ) : BaseIntegrationSpec({
-    should("get group members") {
+    should("get available currencies") {
         // given
         val listOfCurrencies = listOf("PLN", "USD", "EUR")
         val currenciesResponse = createAvailableCurrenciesResponse(listOfCurrencies.map { createCurrencyResponse(it) })

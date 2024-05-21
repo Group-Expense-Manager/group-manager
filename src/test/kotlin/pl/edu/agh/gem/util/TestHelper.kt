@@ -54,7 +54,7 @@ fun createGroup(
     ownerId = ownerId,
     members = members,
     acceptRequired = acceptRequired,
-    baseCurrency = baseCurrency,
+    groupCurrencies = baseCurrency,
     attachmentId = attachmentId,
     joinCode = joinCode,
 )

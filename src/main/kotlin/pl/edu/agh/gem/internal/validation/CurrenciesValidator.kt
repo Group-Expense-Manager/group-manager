@@ -9,11 +9,11 @@ class CurrenciesValidator : BaseValidator<GroupDataWrapper>() {
 
     override val checks: List<Check<GroupDataWrapper>> = listOf(
         Check(BASE_CURRENCY_NOT_SUPPORTED) { this.validateCurrency(it) },
-        Check(BASE_CURRENCY_NOT_EMPTY) { it.group.baseCurrency.isNotEmpty() },
+        Check(BASE_CURRENCY_NOT_EMPTY) { it.group.groupCurrencies.isNotEmpty() },
     )
 
     private fun validateCurrency(dataWrapper: GroupDataWrapper): Boolean {
-        return dataWrapper.group.baseCurrency.all { currency ->
+        return dataWrapper.group.groupCurrencies.all { currency ->
             dataWrapper.availableCurrencies.contains(currency)
         }
     }

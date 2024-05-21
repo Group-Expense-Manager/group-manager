@@ -7,7 +7,7 @@ import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.validation.CurrenciesValidator
 import pl.edu.agh.gem.internal.validation.GroupDataWrapper
-import pl.edu.agh.gem.validator.ValidatiorList.Companion.validatorsOf
+import pl.edu.agh.gem.validator.ValidatorList.Companion.validatorsOf
 import pl.edu.agh.gem.validator.ValidatorsException
 
 @Service
