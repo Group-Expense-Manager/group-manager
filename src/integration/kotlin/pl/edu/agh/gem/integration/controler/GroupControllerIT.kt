@@ -71,7 +71,7 @@ class GroupControllerIT(
         }
     }
 
-    should("return validator exception cause BASE_CURRENCY_NOT_SUPPORTED") {
+    should("return validator exception cause GROUP_CURRENCY_NOT_SUPPORTED") {
         // given
         val user = createGemUser()
         val currenciesResponse = createAvailableCurrenciesResponse()
