@@ -28,7 +28,7 @@ class GroupEntityTest : ShouldSpec({
             it.ownerId shouldBe group.ownerId
             it.members shouldBe group.members.map { member -> MemberEntity(member.userId) }
             it.acceptRequired shouldBe group.acceptRequired
-            it.baseCurrency shouldBe group.groupCurrencies.map { currency -> CurrencyEntity(currency.code) }
+            it.groupCurrencies shouldBe group.groupCurrencies.map { currency -> CurrencyEntity(currency.code) }
             it.joinCode shouldBe group.joinCode
             it.attachmentId shouldBe group.attachmentId
         }
@@ -49,7 +49,7 @@ class GroupEntityTest : ShouldSpec({
             it.ownerId shouldBe groupEntity.ownerId
             it.members shouldBe groupEntity.members.map { memberEntity -> Member(memberEntity.userId) }
             it.acceptRequired shouldBe groupEntity.acceptRequired
-            it.groupCurrencies shouldBe groupEntity.baseCurrency.map { currencyEntity -> Currency(currencyEntity.code) }
+            it.groupCurrencies shouldBe groupEntity.groupCurrencies.map { currencyEntity -> Currency(currencyEntity.code) }
             it.joinCode shouldBe groupEntity.joinCode
             it.attachmentId shouldBe groupEntity.attachmentId
         }
