@@ -18,6 +18,7 @@ import pl.edu.agh.gem.error.withMessage
 import pl.edu.agh.gem.error.withUserMessage
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
+import pl.edu.agh.gem.internal.service.UserWithoutGroup
 import pl.edu.agh.gem.validator.ValidatorsException
 
 @ControllerAdvice
@@ -44,6 +45,11 @@ class ApiExceptionHandler {
     @ExceptionHandler(UserAlreadyInGroupException::class)
     fun handleUserAlreadyInGroupException(exception: UserAlreadyInGroupException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), CONFLICT)
+    }
+
+    @ExceptionHandler(UserWithoutGroup::class)
+    fun handleUserWithoutGroup(exception: UserWithoutGroup): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), NOT_FOUND)
     }
 
     private fun handleValidatorException(exception: ValidatorsException): SimpleErrorsHolder {

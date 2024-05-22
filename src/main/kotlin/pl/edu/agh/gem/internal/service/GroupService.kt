@@ -39,6 +39,10 @@ class GroupService(
         return groupRepository.findById(groupId) ?: throw MissingGroupException(groupId)
     }
 
+    fun getUserGroups(userId: String): List<Group> {
+        return groupRepository.findByUserId(userId).also { if (it.isEmpty()) throw UserWithoutGroup(userId) }
+    }
+
     private fun createGroupDataWrapper(group: Group): GroupDataWrapper {
         return GroupDataWrapper(group, currencyManagerClient.getCurrencies())
     }
@@ -50,6 +54,9 @@ class GroupService(
 
 class MissingGroupException(joinCode: String) :
     RuntimeException("Failed to find group with joinCode:$joinCode")
+
+class UserWithoutGroup(userId: String) :
+    RuntimeException("User with id:$userId does not belong to any group")
 
 class UserAlreadyInGroupException(groupId: String, userId: String) :
     RuntimeException("User with id:$userId is already in group with joinCode:$groupId")

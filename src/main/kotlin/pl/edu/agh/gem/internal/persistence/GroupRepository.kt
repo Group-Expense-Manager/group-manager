@@ -7,4 +7,5 @@ interface GroupRepository {
     fun findByJoinCode(joinCode: String): Group?
     fun save(group: Group): Group
     fun findById(groupId: String): Group?
+    fun findByUserId(userId: String): List<Group>
 }
