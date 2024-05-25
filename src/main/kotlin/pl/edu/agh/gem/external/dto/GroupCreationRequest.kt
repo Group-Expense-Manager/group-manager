@@ -9,10 +9,10 @@ import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.internal.model.Group
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.validation.ValidationMessage.ATTACHMENT_ID_NOT_BLANK
-import pl.edu.agh.gem.internal.validation.ValidationMessage.BASE_CURRENCY_NOT_BLANK
-import pl.edu.agh.gem.internal.validation.ValidationMessage.BASE_CURRENCY_PATTERN
 import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MAX_VALUE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MIN_VALUE
+import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_BLANK
+import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTERN
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
 import java.util.UUID.randomUUID
@@ -28,9 +28,9 @@ data class GroupCreationRequest(
 
     val acceptRequired: Boolean,
 
-    @field:NotBlank(message = BASE_CURRENCY_NOT_BLANK)
-    @field:Pattern(regexp = "[A-Z]{3}", message = BASE_CURRENCY_PATTERN)
-    val baseCurrency: String,
+    @field:NotBlank(message = GROUP_CURRENCY_NOT_BLANK)
+    @field:Pattern(regexp = "[A-Z]{3}", message = GROUP_CURRENCY_PATTERN)
+    val groupCurrencies: String,
 
     @field:NotBlank(message = ATTACHMENT_ID_NOT_BLANK)
     val attachmentId: String,
@@ -44,7 +44,7 @@ fun GroupCreationRequest.toDomain(ownerId: String, joinCode: String) =
         ownerId = ownerId,
         members = listOf(Member(ownerId)),
         acceptRequired = acceptRequired,
-        groupCurrencies = listOf(Currency(baseCurrency)),
+        groupCurrencies = listOf(Currency(groupCurrencies)),
         joinCode = joinCode,
         attachmentId = attachmentId,
     )

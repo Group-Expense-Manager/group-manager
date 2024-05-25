@@ -15,13 +15,13 @@ fun createGroupCreationRequest(
     name: String = "groupName",
     color: Long = 0,
     acceptRequired: Boolean = false,
-    baseCurrency: String = "PLN",
+    groupCurrencies: String = "PLN",
     attachmentId: String = "attachmentId",
 ) = GroupCreationRequest(
     name = name,
     color = color,
     acceptRequired = acceptRequired,
-    baseCurrency = baseCurrency,
+    groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
 )
 
@@ -44,7 +44,7 @@ fun createGroup(
     ownerId: String = "ownerId",
     members: List<Member> = listOf(Member("memberId")),
     acceptRequired: Boolean = false,
-    baseCurrency: Currencies = listOf(Currency("PLN")),
+    groupCurrencies: Currencies = listOf(Currency("PLN")),
     attachmentId: String = "attachmentId",
     joinCode: String = "joinCode",
 ) = Group(
@@ -54,7 +54,7 @@ fun createGroup(
     ownerId = ownerId,
     members = members,
     acceptRequired = acceptRequired,
-    groupCurrencies = baseCurrency,
+    groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
     joinCode = joinCode,
 )
@@ -66,7 +66,7 @@ fun createGroupEntity(
     ownerId: String = "ownerId",
     members: List<MemberEntity> = listOf(MemberEntity("memberId")),
     acceptRequired: Boolean = false,
-    baseCurrency: List<CurrencyEntity> = listOf(CurrencyEntity("PLN")),
+    groupCurrencies: List<CurrencyEntity> = listOf(CurrencyEntity("PLN")),
     attachmentId: String = "attachmentId",
     joinCode: String = "joinCode",
 ) = GroupEntity(
@@ -76,7 +76,7 @@ fun createGroupEntity(
     ownerId = ownerId,
     members = members,
     acceptRequired = acceptRequired,
-    baseCurrency = baseCurrency,
+    groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
     joinCode = joinCode,
 )
