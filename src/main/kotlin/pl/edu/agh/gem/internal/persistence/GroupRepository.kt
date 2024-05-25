@@ -4,4 +4,6 @@ import pl.edu.agh.gem.internal.model.Group
 
 interface GroupRepository {
     fun insertWithUniqueJoinCode(group: Group): Group
+    fun findByJoinCode(joinCode: String): Group?
+    fun save(group: Group): Group
 }
