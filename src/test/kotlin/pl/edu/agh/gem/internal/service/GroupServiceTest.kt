@@ -95,4 +95,29 @@ class GroupServiceTest : ShouldSpec({
         verify(groupRepository, times(1)).findByJoinCode(joinCode)
         verify(groupRepository, times(0)).save(any())
     }
+
+    should("get group successfully") {
+        // given
+        val groupId = "groupId"
+        val group = createGroup(id = groupId)
+        whenever(groupRepository.findById(groupId)).thenReturn(group)
+
+        // when
+        val result = groupService.getGroup(groupId)
+
+        // then
+        verify(groupRepository, times(1)).findById(groupId)
+        result shouldBe group
+    }
+
+    should("throw MissingGroupException when group with id does not exist") {
+        // given
+        val groupId = "nonExistentGroupId"
+        whenever(groupRepository.findById(groupId)).thenReturn(null)
+
+        // when & then
+        shouldThrow<MissingGroupException> {
+            groupService.getGroup(groupId)
+        }
+    }
 },)

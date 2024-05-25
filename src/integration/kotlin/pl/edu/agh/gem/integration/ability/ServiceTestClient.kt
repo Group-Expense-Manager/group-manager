@@ -9,6 +9,7 @@ import pl.edu.agh.gem.headers.HeadersUtils.withAppAcceptType
 import pl.edu.agh.gem.headers.HeadersUtils.withAppContentType
 import pl.edu.agh.gem.headers.HeadersUtils.withValidatedUser
 import pl.edu.agh.gem.paths.Paths.EXTERNAL
+import pl.edu.agh.gem.paths.Paths.INTERNAL
 import pl.edu.agh.gem.security.GemUser
 import java.net.URI
 
@@ -31,6 +32,13 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
         return webClient.post()
             .uri(URI("$EXTERNAL/groups/join/$joinCode"))
             .headers { it.withValidatedUser(user) }
+            .exchange()
+    }
+
+    fun getMembers(groupId: String): ResponseSpec {
+        return webClient.get()
+            .uri(URI("$INTERNAL/members/$groupId"))
+            .headers { it.withAppAcceptType() }
             .exchange()
     }
 }

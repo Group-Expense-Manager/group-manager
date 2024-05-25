@@ -6,4 +6,5 @@ interface GroupRepository {
     fun insertWithUniqueJoinCode(group: Group): Group
     fun findByJoinCode(joinCode: String): Group?
     fun save(group: Group): Group
+    fun findById(groupId: String): Group?
 }

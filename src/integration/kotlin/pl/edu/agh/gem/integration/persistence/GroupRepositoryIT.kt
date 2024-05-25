@@ -90,4 +90,25 @@ class GroupRepositoryIT(
         foundGroup.shouldNotBeNull()
         foundGroup.shouldBe(updatedGroup)
     }
+
+    should("find group by id") {
+        // given
+        val group = createGroup()
+        groupRepository.save(group)
+
+        // when
+        val foundGroup = groupRepository.findById(group.id)
+
+        // then
+        foundGroup.shouldNotBeNull()
+        foundGroup.shouldBe(group)
+    }
+
+    should("return null if group with id does not exist") {
+        // when
+        val foundGroup = groupRepository.findById("nonExistentGroupId")
+
+        // then
+        foundGroup.shouldBeNull()
+    }
 },)
