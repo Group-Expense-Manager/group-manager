@@ -5,3 +5,8 @@ spring:
       password: admin
       username: admin
       authentication-database: admin
+
+currency-manager:
+  url: postman-mock-server.com
+  read-timeout: 1000ms
+  connect-timeout: 1000ms
