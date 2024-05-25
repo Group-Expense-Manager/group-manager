@@ -40,7 +40,7 @@ import pl.edu.agh.gem.util.createGroupCreationRequest
 import java.lang.Long.MAX_VALUE
 import java.lang.Long.MIN_VALUE
 
-class GroupControllerIT(
+class ExternalGroupControllerIT(
     private val service: ServiceTestClient,
     private val groupRepository: GroupRepository,
 ) : BaseIntegrationSpec({
