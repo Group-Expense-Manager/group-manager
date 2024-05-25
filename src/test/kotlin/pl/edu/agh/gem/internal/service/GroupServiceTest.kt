@@ -3,12 +3,14 @@ package pl.edu.agh.gem.internal.service
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import pl.edu.agh.gem.helper.user.DummyUser.USER_ID
 import pl.edu.agh.gem.internal.client.CurrencyManagerClient
 import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.internal.model.Member
@@ -119,5 +121,34 @@ class GroupServiceTest : ShouldSpec({
         shouldThrow<MissingGroupException> {
             groupService.getGroup(groupId)
         }
+    }
+
+    should("get user groups successfully") {
+        // given
+        val userId = USER_ID
+        val group1 = createGroup()
+        val group2 = createGroup()
+        whenever(groupRepository.findByUserId(userId)).thenReturn(listOf(group1, group2))
+
+        // when
+        val result = groupService.getUserGroups(userId)
+
+        // then
+        verify(groupRepository, times(1)).findByUserId(userId)
+        result shouldHaveSize 2
+        result shouldContain group1
+        result shouldContain group2
+    }
+
+    should("throw UserWithoutGroup exception when user has no groups") {
+        // given
+        val userWithoutGroupId = USER_ID
+        whenever(groupRepository.findByUserId(userWithoutGroupId)).thenReturn(listOf())
+
+        // when & then
+        shouldThrow<UserWithoutGroup> {
+            groupService.getUserGroups(userWithoutGroupId)
+        }
+        verify(groupRepository, times(1)).findByUserId(userWithoutGroupId)
     }
 },)

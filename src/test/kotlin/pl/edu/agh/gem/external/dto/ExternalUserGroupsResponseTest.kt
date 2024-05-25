@@ -70,6 +70,6 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
         val externalUserGroupsResponse = groups.toExternalUserGroupsResponse()
 
         // then
-        externalUserGroupsResponse.groups.shouldBe(listOf())
+        externalUserGroupsResponse.groups shouldBe listOf()
     }
 },)

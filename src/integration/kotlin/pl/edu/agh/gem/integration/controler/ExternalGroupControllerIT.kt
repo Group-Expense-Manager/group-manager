@@ -20,8 +20,6 @@ import pl.edu.agh.gem.assertion.shouldHaveValidationError
 import pl.edu.agh.gem.assertion.shouldHaveValidatorError
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.GroupCreationResponse
-import pl.edu.agh.gem.helper.user.DummyUser
-import pl.edu.agh.gem.helper.user.DummyUser.EMAIL
 import pl.edu.agh.gem.helper.user.createGemUser
 import pl.edu.agh.gem.integration.BaseIntegrationSpec
 import pl.edu.agh.gem.integration.ability.ServiceTestClient
@@ -39,7 +37,6 @@ import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MAX_VALUE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MIN_VALUE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
-import pl.edu.agh.gem.security.GemUser
 import pl.edu.agh.gem.util.createAvailableCurrenciesResponse
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupCreationRequest
@@ -166,28 +163,28 @@ class ExternalGroupControllerIT(
     should("return groups for the user") {
         // given
         val user = createGemUser()
-        
+
         val groupsId = listOf("group1", "group2", "group3")
         val ownersId = listOf("owner1", "owner2", "owner3")
         val groupsName = listOf("Group 1", "Group 2", "Group 3")
         val groupsColor = listOf(123456L, 654321L, 111111L)
         val groupsAttachmentId = listOf("attachment1", "attachment2", "attachment3")
         val joinCodes = listOf("joinCode1", "joinCode2", "joinCode3")
-        
+
         val groupList = groupsId.mapIndexed { index, groupId ->
             createGroup(
-                    id = groupId,
-                    ownerId = ownersId[index],
-                    name = groupsName[index],
-                    color = groupsColor[index],
-                    attachmentId = groupsAttachmentId[index],
-                    joinCode = joinCodes[index],
-                    members = listOf(Member(userId = user.id),Member(userId = ownersId[index])),
+                id = groupId,
+                ownerId = ownersId[index],
+                name = groupsName[index],
+                color = groupsColor[index],
+                attachmentId = groupsAttachmentId[index],
+                joinCode = joinCodes[index],
+                members = listOf(Member(userId = user.id), Member(userId = ownersId[index])),
             )
         }
-        
+
         groupList.forEach(groupRepository::save)
-        
+
         // when
         val response = service.getUserGroups(user)
 
@@ -215,5 +212,4 @@ class ExternalGroupControllerIT(
             errors.first().code shouldBe UserWithoutGroup::class.simpleName
         }
     }
-    
 },)

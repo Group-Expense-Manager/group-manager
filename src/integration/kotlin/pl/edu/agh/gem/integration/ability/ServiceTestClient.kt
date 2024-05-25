@@ -51,8 +51,8 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
 
     fun getUserGroups(user: GemUser): ResponseSpec {
         return webClient.get()
-                .uri(URI("$EXTERNAL/groups"))
-                .headers { it.withAppAcceptType().withValidatedUser(user) }
-                .exchange()
+            .uri(URI("$EXTERNAL/groups"))
+            .headers { it.withAppAcceptType().withValidatedUser(user) }
+            .exchange()
     }
 }
