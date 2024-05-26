@@ -16,7 +16,7 @@ data class GroupEntity(
     val ownerId: String,
     val members: List<MemberEntity>,
     val acceptRequired: Boolean,
-    val baseCurrency: List<CurrencyEntity>,
+    val groupCurrencies: List<CurrencyEntity>,
     @Indexed(background = true, unique = true)
     val joinCode: String,
     val attachmentId: String,
@@ -37,7 +37,7 @@ fun Group.toEntity() = GroupEntity(
     ownerId = ownerId,
     members = members.map { it.toEntity() },
     acceptRequired = acceptRequired,
-    baseCurrency = groupCurrencies.map { it.toEntity() },
+    groupCurrencies = groupCurrencies.map { it.toEntity() },
     joinCode = joinCode,
     attachmentId = attachmentId,
 )
@@ -57,7 +57,7 @@ fun GroupEntity.toDomain() = Group(
     ownerId = ownerId,
     members = members.map { it.toDomain() },
     acceptRequired = acceptRequired,
-    groupCurrencies = baseCurrency.map { it.toDomain() },
+    groupCurrencies = groupCurrencies.map { it.toDomain() },
     joinCode = joinCode,
     attachmentId = attachmentId,
 )
