@@ -31,7 +31,7 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
     fun joinGroup(joinCode: String, user: GemUser): ResponseSpec {
         return webClient.post()
             .uri(URI("$EXTERNAL/groups/join/$joinCode"))
-            .headers { it.withValidatedUser(user) }
+            .headers { it.withValidatedUser(user).withAppContentType().withAppAcceptType() }
             .exchange()
     }
 
@@ -52,6 +52,13 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
     fun getUserGroups(user: GemUser): ResponseSpec {
         return webClient.get()
             .uri(URI("$EXTERNAL/groups"))
+            .headers { it.withAppAcceptType().withValidatedUser(user) }
+            .exchange()
+    }
+
+    fun getGroup(user: GemUser, groupId: String): ResponseSpec {
+        return webClient.get()
+            .uri(URI("$EXTERNAL/groups/$groupId"))
             .headers { it.withAppAcceptType().withValidatedUser(user) }
             .exchange()
     }

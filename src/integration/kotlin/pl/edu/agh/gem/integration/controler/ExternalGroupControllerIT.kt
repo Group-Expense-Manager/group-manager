@@ -11,6 +11,7 @@ import io.kotest.matchers.shouldBe
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
 import pl.edu.agh.gem.assertion.shouldBody
@@ -18,6 +19,8 @@ import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
 import pl.edu.agh.gem.assertion.shouldHaveValidationError
 import pl.edu.agh.gem.assertion.shouldHaveValidatorError
+import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
+import pl.edu.agh.gem.external.dto.ExternalGroupResponse
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.GroupCreationResponse
 import pl.edu.agh.gem.helper.user.createGemUser
@@ -210,6 +213,63 @@ class ExternalGroupControllerIT(
         response shouldHaveErrors {
             errors shouldHaveSize 1
             errors.first().code shouldBe UserWithoutGroup::class.simpleName
+        }
+    }
+
+    should("return group when user has access") {
+        // given
+        val user = createGemUser()
+        val group = createGroup(members = listOf(Member(userId = user.id)))
+        groupRepository.save(group)
+
+        // when
+        val response = service.getGroup(user, group.id)
+
+        // then
+        response shouldHaveHttpStatus OK
+        response.shouldBody<ExternalGroupResponse> {
+            groupId shouldBe group.id
+            name shouldBe group.name
+            color shouldBe group.color
+            ownerId shouldBe group.ownerId
+            members.map { it.userId } shouldContainExactly group.members.map { it.userId }
+            acceptRequired shouldBe group.acceptRequired
+            groupCurrencies.map { it.code } shouldContainExactly group.groupCurrencies.map { it.code }
+            joinCode shouldBe group.joinCode
+            attachmentId shouldBe group.attachmentId
+        }
+    }
+
+    should("return NOT_FOUND when group does not exist") {
+        // given
+        val unknownGroupId = "unknownGroupId"
+        val user = createGemUser()
+
+        // when
+        val response = service.getGroup(user, unknownGroupId)
+
+        // then
+        response shouldHaveHttpStatus NOT_FOUND
+        response shouldHaveErrors {
+            errors shouldHaveSize 1
+            errors.first().code shouldBe MissingGroupException::class.simpleName
+        }
+    }
+
+    should("return UserWithoutGroupAccessException when user does not have access to the group") {
+        // given
+        val user = createGemUser()
+        val group = createGroup(members = listOf())
+        groupRepository.save(group)
+
+        // when
+        val response = service.getGroup(user, group.id)
+
+        // then
+        response shouldHaveHttpStatus FORBIDDEN
+        response shouldHaveErrors {
+            errors shouldHaveSize 1
+            errors.first().code shouldBe UserWithoutGroupAccessException::class.simpleName
         }
     }
 },)

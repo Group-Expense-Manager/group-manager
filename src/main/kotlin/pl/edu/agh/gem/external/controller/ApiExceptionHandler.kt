@@ -4,6 +4,7 @@ import org.springframework.core.Ordered.LOWEST_PRECEDENCE
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.CONFLICT
+import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -16,6 +17,7 @@ import pl.edu.agh.gem.error.withCode
 import pl.edu.agh.gem.error.withDetails
 import pl.edu.agh.gem.error.withMessage
 import pl.edu.agh.gem.error.withUserMessage
+import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
 import pl.edu.agh.gem.internal.service.UserWithoutGroup
@@ -50,6 +52,13 @@ class ApiExceptionHandler {
     @ExceptionHandler(UserWithoutGroup::class)
     fun handleUserWithoutGroup(exception: UserWithoutGroup): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), NOT_FOUND)
+    }
+
+    @ExceptionHandler(UserWithoutGroupAccessException::class)
+    fun handleUserWithoutGroupAccessException(
+        exception: UserWithoutGroupAccessException,
+    ): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), FORBIDDEN)
     }
 
     private fun handleValidatorException(exception: ValidatorsException): SimpleErrorsHolder {
