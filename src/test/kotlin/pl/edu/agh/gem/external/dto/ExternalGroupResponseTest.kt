@@ -1,0 +1,79 @@
+package pl.edu.agh.gem.external.dto
+
+import io.kotest.core.spec.style.ShouldSpec
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
+import pl.edu.agh.gem.internal.model.Currency
+import pl.edu.agh.gem.internal.model.Member
+import pl.edu.agh.gem.util.createGroup
+
+class ExternalGroupResponseTest : ShouldSpec({
+
+    should("correctly map Group to ExternalGroupResponse") {
+        // given
+        val group = createGroup(
+            members = listOf(
+                Member(userId = "user1"),
+                Member(userId = "user2"),
+                Member(userId = "user3"),
+            ),
+            groupCurrencies = listOf(
+                Currency(code = "USD"),
+                Currency(code = "EUR"),
+            ),
+            acceptRequired = true,
+            id = "group1",
+            name = "Test Group",
+            color = 0xFF0000,
+            ownerId = "owner1",
+            joinCode = "join123",
+            attachmentId = "attachment456",
+        )
+
+        // when
+        val externalGroupResponse = group.toExternalGroupResponse()
+
+        // then
+        externalGroupResponse.groupId.shouldBe("group1")
+        externalGroupResponse.name.shouldBe("Test Group")
+        externalGroupResponse.color.shouldBe(0xFF0000)
+        externalGroupResponse.ownerId.shouldBe("owner1")
+        externalGroupResponse.members.map { it.userId } shouldContainExactly listOf("user1", "user2", "user3")
+        externalGroupResponse.acceptRequired.shouldBe(true)
+        externalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly listOf("USD", "EUR")
+        externalGroupResponse.joinCode.shouldBe("join123")
+        externalGroupResponse.attachmentId.shouldBe("attachment456")
+    }
+
+    should("return an empty list when Group has no members") {
+        // given
+        val group = createGroup(
+            members = listOf(),
+            groupCurrencies = listOf(
+                Currency(code = "USD"),
+                Currency(code = "EUR"),
+            ),
+            acceptRequired = false,
+            id = "group1",
+            name = "Test Group",
+            color = 0x00FF00,
+            ownerId = "owner1",
+            joinCode = "join123",
+            attachmentId = "attachment456",
+        )
+
+        // when
+        val externalGroupResponse = group.toExternalGroupResponse()
+
+        // then
+        externalGroupResponse.groupId.shouldBe("group1")
+        externalGroupResponse.name.shouldBe("Test Group")
+        externalGroupResponse.color.shouldBe(0x00FF00)
+        externalGroupResponse.ownerId.shouldBe("owner1")
+        externalGroupResponse.members.shouldBe(listOf())
+        externalGroupResponse.acceptRequired.shouldBe(false)
+        externalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly listOf("USD", "EUR")
+        externalGroupResponse.joinCode.shouldBe("join123")
+        externalGroupResponse.attachmentId.shouldBe("attachment456")
+    }
+},)
