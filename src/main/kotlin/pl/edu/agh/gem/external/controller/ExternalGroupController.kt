@@ -3,15 +3,18 @@ package pl.edu.agh.gem.external.controller
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.OK
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
 import pl.edu.agh.gem.external.dto.GroupCreationResponse
 import pl.edu.agh.gem.external.dto.toDomain
+import pl.edu.agh.gem.external.dto.toExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.toGroupCreationResponse
 import pl.edu.agh.gem.internal.generator.CodeGenerator
 import pl.edu.agh.gem.internal.service.GroupService
@@ -45,5 +48,13 @@ class ExternalGroupController(
         @PathVariable joinCode: String,
     ) {
         groupService.joinGroup(joinCode, userId)
+    }
+
+    @GetMapping
+    @ResponseStatus(OK)
+    fun getGroups(
+        @GemUserId userId: String,
+    ): ExternalUserGroupsResponse {
+        return groupService.getUserGroups(userId).toExternalUserGroupsResponse()
     }
 }

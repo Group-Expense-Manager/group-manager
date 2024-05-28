@@ -2,6 +2,7 @@ package pl.edu.agh.gem.integration.controler
 
 import io.kotest.datatest.withData
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotContainDuplicates
 import io.kotest.matchers.nulls.shouldBeNull
@@ -17,6 +18,7 @@ import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
 import pl.edu.agh.gem.assertion.shouldHaveValidationError
 import pl.edu.agh.gem.assertion.shouldHaveValidatorError
+import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.GroupCreationResponse
 import pl.edu.agh.gem.helper.user.createGemUser
 import pl.edu.agh.gem.integration.BaseIntegrationSpec
@@ -26,6 +28,7 @@ import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
+import pl.edu.agh.gem.internal.service.UserWithoutGroupException
 import pl.edu.agh.gem.internal.validation.ValidationMessage.ATTACHMENT_ID_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MAX_VALUE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MIN_VALUE
@@ -154,6 +157,59 @@ class ExternalGroupControllerIT(
             shouldNotBeNull()
             members.map { member -> member.userId }.shouldNotContainDuplicates()
             members.map { member -> member.userId }.shouldContain(user.id)
+        }
+    }
+
+    should("return groups for the user") {
+        // given
+        val user = createGemUser()
+
+        val groupsId = listOf("group1", "group2", "group3")
+        val ownersId = listOf("owner1", "owner2", "owner3")
+        val groupsName = listOf("Group 1", "Group 2", "Group 3")
+        val groupsColor = listOf(123456L, 654321L, 111111L)
+        val groupsAttachmentId = listOf("attachment1", "attachment2", "attachment3")
+        val joinCodes = listOf("joinCode1", "joinCode2", "joinCode3")
+
+        val groupList = groupsId.mapIndexed { index, groupId ->
+            createGroup(
+                id = groupId,
+                ownerId = ownersId[index],
+                name = groupsName[index],
+                color = groupsColor[index],
+                attachmentId = groupsAttachmentId[index],
+                joinCode = joinCodes[index],
+                members = listOf(Member(userId = user.id), Member(userId = ownersId[index])),
+            )
+        }
+
+        groupList.forEach(groupRepository::save)
+
+        // when
+        val response = service.getUserGroups(user)
+
+        // then
+        response shouldHaveHttpStatus OK
+        response.shouldBody<ExternalUserGroupsResponse> {
+            groups.map { it.groupId } shouldContainExactly groupsId
+            groups.map { it.name } shouldContainExactly groupsName
+            groups.map { it.color } shouldContainExactly groupsColor
+            groups.map { it.attachmentId } shouldContainExactly groupsAttachmentId
+        }
+    }
+
+    should("return NOT_FOUND when user does not have any groups") {
+        // given
+        val user = createGemUser()
+
+        // when
+        val response = service.getUserGroups(user)
+
+        // then
+        response shouldHaveHttpStatus NOT_FOUND
+        response shouldHaveErrors {
+            errors shouldHaveSize 1
+            errors.first().code shouldBe UserWithoutGroupException::class.simpleName
         }
     }
 },)
