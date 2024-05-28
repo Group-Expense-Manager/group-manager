@@ -146,7 +146,7 @@ class GroupServiceTest : ShouldSpec({
         whenever(groupRepository.findByUserId(userWithoutGroupId)).thenReturn(listOf())
 
         // when & then
-        shouldThrow<UserWithoutGroup> {
+        shouldThrow<UserWithoutGroupException> {
             groupService.getUserGroups(userWithoutGroupId)
         }
         verify(groupRepository, times(1)).findByUserId(userWithoutGroupId)

@@ -28,7 +28,7 @@ import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
-import pl.edu.agh.gem.internal.service.UserWithoutGroup
+import pl.edu.agh.gem.internal.service.UserWithoutGroupException
 import pl.edu.agh.gem.internal.validation.ValidationMessage.ATTACHMENT_ID_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MAX_VALUE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MIN_VALUE
@@ -209,7 +209,7 @@ class ExternalGroupControllerIT(
         response shouldHaveHttpStatus NOT_FOUND
         response shouldHaveErrors {
             errors shouldHaveSize 1
-            errors.first().code shouldBe UserWithoutGroup::class.simpleName
+            errors.first().code shouldBe UserWithoutGroupException::class.simpleName
         }
     }
 },)
