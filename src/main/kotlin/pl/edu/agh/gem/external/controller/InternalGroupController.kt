@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.InternalGroupResponse
+import pl.edu.agh.gem.external.dto.toExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.toInternalGroupResponse
 import pl.edu.agh.gem.internal.service.GroupService
 import pl.edu.agh.gem.media.InternalApiMediaType.APPLICATION_JSON_INTERNAL_VER_1
@@ -24,5 +26,13 @@ class InternalGroupController(
         @PathVariable groupId: String,
     ): InternalGroupResponse {
         return groupService.getGroup(groupId).toInternalGroupResponse()
+    }
+
+    @GetMapping("/users/{userId}", produces = [APPLICATION_JSON_INTERNAL_VER_1])
+    @ResponseStatus(OK)
+    fun getGroups(
+        @PathVariable userId: String,
+    ): ExternalUserGroupsResponse {
+        return groupService.getUserGroups(userId).toExternalUserGroupsResponse()
     }
 }
