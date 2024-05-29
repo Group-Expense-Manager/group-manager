@@ -24,7 +24,6 @@ class GroupEntityTest : ShouldSpec({
         groupEntity.also {
             it.id shouldBe group.id
             it.name shouldBe group.name
-            it.color shouldBe group.color
             it.ownerId shouldBe group.ownerId
             it.members shouldBe group.members.map { member -> MemberEntity(member.userId) }
             it.acceptRequired shouldBe group.acceptRequired
@@ -45,7 +44,6 @@ class GroupEntityTest : ShouldSpec({
         group.also {
             it.id shouldBe groupEntity.id
             it.name shouldBe groupEntity.name
-            it.color shouldBe groupEntity.color
             it.ownerId shouldBe groupEntity.ownerId
             it.members shouldBe groupEntity.members.map { memberEntity -> Member(memberEntity.userId) }
             it.acceptRequired shouldBe groupEntity.acceptRequired

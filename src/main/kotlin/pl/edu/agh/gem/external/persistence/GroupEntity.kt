@@ -12,7 +12,6 @@ data class GroupEntity(
     @Id
     val id: String,
     val name: String,
-    val color: Long,
     val ownerId: String,
     val members: List<MemberEntity>,
     val acceptRequired: Boolean,
@@ -33,7 +32,6 @@ data class CurrencyEntity(
 fun Group.toEntity() = GroupEntity(
     id = id,
     name = name,
-    color = color,
     ownerId = ownerId,
     members = members.map { it.toEntity() },
     acceptRequired = acceptRequired,
@@ -53,7 +51,6 @@ private fun Currency.toEntity() = CurrencyEntity(
 fun GroupEntity.toDomain() = Group(
     id = id,
     name = name,
-    color = color,
     ownerId = ownerId,
     members = members.map { it.toDomain() },
     acceptRequired = acceptRequired,

@@ -13,13 +13,11 @@ import pl.edu.agh.gem.internal.model.Member
 
 fun createGroupCreationRequest(
     name: String = "groupName",
-    color: Long = 0,
     acceptRequired: Boolean = false,
     groupCurrencies: String = "PLN",
     attachmentId: String = "attachmentId",
 ) = GroupCreationRequest(
     name = name,
-    color = color,
     acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
@@ -40,7 +38,6 @@ fun createCurrencyResponse(
 fun createGroup(
     id: String = "groupId",
     name: String = "groupName",
-    color: Long = 0,
     ownerId: String = "ownerId",
     members: List<Member> = listOf(Member("memberId")),
     acceptRequired: Boolean = false,
@@ -50,7 +47,6 @@ fun createGroup(
 ) = Group(
     id = id,
     name = name,
-    color = color,
     ownerId = ownerId,
     members = members,
     acceptRequired = acceptRequired,
@@ -62,7 +58,6 @@ fun createGroup(
 fun createGroupEntity(
     id: String = "groupId",
     name: String = "groupName",
-    color: Long = 0,
     ownerId: String = "ownerId",
     members: List<MemberEntity> = listOf(MemberEntity("memberId")),
     acceptRequired: Boolean = false,
@@ -72,7 +67,6 @@ fun createGroupEntity(
 ) = GroupEntity(
     id = id,
     name = name,
-    color = color,
     ownerId = ownerId,
     members = members,
     acceptRequired = acceptRequired,

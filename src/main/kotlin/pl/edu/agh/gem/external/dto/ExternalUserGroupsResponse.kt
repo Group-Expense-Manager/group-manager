@@ -9,10 +9,9 @@ data class ExternalUserGroupsResponse(
 data class UserGroupsDto(
     val groupId: String,
     val name: String,
-    val color: Long,
     val attachmentId: String,
 )
 
 fun List<Group>.toExternalUserGroupsResponse() = ExternalUserGroupsResponse(
-    groups = map { UserGroupsDto(it.id, it.name, it.color, it.attachmentId) },
+    groups = map { UserGroupsDto(it.id, it.name, it.attachmentId) },
 )

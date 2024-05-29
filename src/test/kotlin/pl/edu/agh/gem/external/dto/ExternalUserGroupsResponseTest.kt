@@ -27,7 +27,6 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
         externalUserGroupsResponse.groups.first().also {
             it.groupId shouldBe groups.first().id
             it.name shouldBe groups.first().name
-            it.color shouldBe groups.first().color
             it.attachmentId shouldBe groups.first().attachmentId
         }
     }
@@ -37,14 +36,12 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
         val userId = "userId"
         val groupsId = listOf("group1", "group2", "group3")
         val groupsName = listOf("Group 1", "Group 2", "Group 3")
-        val groupsColor = listOf(123456L, 654321L, 111111L)
         val groupsAttachmentId = listOf("attachment1", "attachment2", "attachment3")
         val groups = groupsId.mapIndexed { index, groupId ->
             createGroup(
                 id = groupId,
                 ownerId = userId,
                 name = groupsName[index],
-                color = groupsColor[index],
                 attachmentId = groupsAttachmentId[index],
                 members = listOf(Member(userId = userId)),
             )
@@ -57,7 +54,6 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
             it.size shouldBe 3
             it.map { groupDto -> groupDto.groupId } shouldContainExactly groupsId
             it.map { groupDto -> groupDto.name } shouldContainExactly groupsName
-            it.map { groupDto -> groupDto.color } shouldContainExactly groupsColor
             it.map { groupDto -> groupDto.attachmentId } shouldContainExactly groupsAttachmentId
         }
     }
