@@ -41,8 +41,6 @@ import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
 import pl.edu.agh.gem.util.createAvailableCurrenciesResponse
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupCreationRequest
-import java.lang.Long.MAX_VALUE
-import java.lang.Long.MIN_VALUE
 
 class ExternalGroupControllerIT(
     private val service: ServiceTestClient,
