@@ -20,14 +20,12 @@ class InternalUserGroupsResponseTest : ShouldSpec({
         )
 
         // when
-        val externalUserGroupsResponse = groups.toInternalUserGroupsResponse()
+        val internalUserGroupsResponse = groups.toInternalUserGroupsResponse()
 
         // then
-        externalUserGroupsResponse.groups.size shouldBe 1
-        externalUserGroupsResponse.groups.first().also {
+        internalUserGroupsResponse.groups.size shouldBe 1
+        internalUserGroupsResponse.groups.first().also {
             it.groupId shouldBe groups.first().id
-            it.name shouldBe groups.first().name
-            it.attachmentId shouldBe groups.first().attachmentId
         }
     }
 
@@ -47,14 +45,12 @@ class InternalUserGroupsResponseTest : ShouldSpec({
             )
         }
         // when
-        val externalUserGroupsResponse = groups.toInternalUserGroupsResponse()
+        val internalUserGroupsResponse = groups.toInternalUserGroupsResponse()
 
         // then
-        externalUserGroupsResponse.groups.also {
+        internalUserGroupsResponse.groups.also {
             it.size shouldBe 3
             it.map { groupDto -> groupDto.groupId } shouldContainExactly groupsId
-            it.map { groupDto -> groupDto.name } shouldContainExactly groupsName
-            it.map { groupDto -> groupDto.attachmentId } shouldContainExactly groupsAttachmentId
         }
     }
 

@@ -1,5 +1,6 @@
 package pl.edu.agh.gem.integration.controler
 
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
@@ -10,6 +11,7 @@ import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.InternalGroupResponse
+import pl.edu.agh.gem.external.dto.InternalUserGroupsResponse
 import pl.edu.agh.gem.integration.BaseIntegrationSpec
 import pl.edu.agh.gem.integration.ability.ServiceTestClient
 import pl.edu.agh.gem.internal.model.Member
@@ -86,14 +88,12 @@ class InternalGroupControllerIT(
 
         // then
         response shouldHaveHttpStatus OK
-        response.shouldBody<ExternalUserGroupsResponse> {
+        response.shouldBody<InternalUserGroupsResponse> {
             groups.map { it.groupId } shouldContainExactly groupsId
-            groups.map { it.name } shouldContainExactly groupsName
-            groups.map { it.attachmentId } shouldContainExactly groupsAttachmentId
         }
     }
 
-    should("return NOT_FOUND when user does not have any groups") {
+    should("return empty list when user does not have any groups") {
         // given
         val userId = "userId"
 
@@ -101,10 +101,9 @@ class InternalGroupControllerIT(
         val response = service.getInternalUserGroups(userId)
 
         // then
-        response shouldHaveHttpStatus NOT_FOUND
-        response shouldHaveErrors {
-            errors shouldHaveSize 1
-            errors.first().code shouldBe UserWithoutGroupException::class.simpleName
+        response shouldHaveHttpStatus OK
+        response.shouldBody<InternalUserGroupsResponse> {
+            groups.shouldBeEmpty()
         }
     }
 },)
