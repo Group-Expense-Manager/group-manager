@@ -139,16 +139,4 @@ class GroupServiceTest : ShouldSpec({
         result shouldContain group1
         result shouldContain group2
     }
-
-    should("throw UserWithoutGroup exception when user has no groups") {
-        // given
-        val userWithoutGroupId = USER_ID
-        whenever(groupRepository.findByUserId(userWithoutGroupId)).thenReturn(listOf())
-
-        // when & then
-        shouldThrow<UserWithoutGroupException> {
-            groupService.getUserGroups(userWithoutGroupId)
-        }
-        verify(groupRepository, times(1)).findByUserId(userWithoutGroupId)
-    }
 },)

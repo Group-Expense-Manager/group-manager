@@ -62,4 +62,11 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
             .headers { it.withAppAcceptType().withValidatedUser(user) }
             .exchange()
     }
+
+    fun getInternalUserGroups(userId: String): ResponseSpec {
+        return webClient.get()
+            .uri(URI("$INTERNAL/groups/users/$userId"))
+            .headers { it.withAppAcceptType() }
+            .exchange()
+    }
 }

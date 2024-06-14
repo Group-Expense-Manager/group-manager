@@ -40,7 +40,7 @@ class GroupService(
     }
 
     fun getUserGroups(userId: String): List<Group> {
-        return groupRepository.findByUserId(userId).also { if (it.isEmpty()) throw UserWithoutGroupException(userId) }
+        return groupRepository.findByUserId(userId)
     }
 
     private fun createGroupDataWrapper(group: Group): GroupDataWrapper {
