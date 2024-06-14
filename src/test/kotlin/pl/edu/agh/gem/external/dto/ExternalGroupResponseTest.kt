@@ -24,7 +24,6 @@ class ExternalGroupResponseTest : ShouldSpec({
             acceptRequired = true,
             id = "group1",
             name = "Test Group",
-            color = 0xFF0000,
             ownerId = "owner1",
             joinCode = "join123",
             attachmentId = "attachment456",
@@ -36,7 +35,6 @@ class ExternalGroupResponseTest : ShouldSpec({
         // then
         externalGroupResponse.groupId.shouldBe("group1")
         externalGroupResponse.name.shouldBe("Test Group")
-        externalGroupResponse.color.shouldBe(0xFF0000)
         externalGroupResponse.ownerId.shouldBe("owner1")
         externalGroupResponse.members.map { it.userId } shouldContainExactly listOf("user1", "user2", "user3")
         externalGroupResponse.acceptRequired.shouldBe(true)
@@ -56,7 +54,6 @@ class ExternalGroupResponseTest : ShouldSpec({
             acceptRequired = false,
             id = "group1",
             name = "Test Group",
-            color = 0x00FF00,
             ownerId = "owner1",
             joinCode = "join123",
             attachmentId = "attachment456",
@@ -68,7 +65,6 @@ class ExternalGroupResponseTest : ShouldSpec({
         // then
         externalGroupResponse.groupId.shouldBe("group1")
         externalGroupResponse.name.shouldBe("Test Group")
-        externalGroupResponse.color.shouldBe(0x00FF00)
         externalGroupResponse.ownerId.shouldBe("owner1")
         externalGroupResponse.members.shouldBe(listOf())
         externalGroupResponse.acceptRequired.shouldBe(false)

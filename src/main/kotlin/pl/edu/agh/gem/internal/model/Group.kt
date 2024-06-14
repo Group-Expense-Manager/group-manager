@@ -3,7 +3,6 @@ package pl.edu.agh.gem.internal.model
 data class Group(
     val id: String,
     val name: String,
-    val color: Long,
     val ownerId: String,
     val members: Members,
     val acceptRequired: Boolean,

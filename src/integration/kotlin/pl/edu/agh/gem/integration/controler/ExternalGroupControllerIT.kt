@@ -33,8 +33,6 @@ import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
 import pl.edu.agh.gem.internal.service.UserWithoutGroupException
 import pl.edu.agh.gem.internal.validation.ValidationMessage.ATTACHMENT_ID_NOT_BLANK
-import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MAX_VALUE
-import pl.edu.agh.gem.internal.validation.ValidationMessage.COLOR_MIN_VALUE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_SUPPORTED
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTERN
@@ -43,8 +41,6 @@ import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
 import pl.edu.agh.gem.util.createAvailableCurrenciesResponse
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupCreationRequest
-import java.lang.Long.MAX_VALUE
-import java.lang.Long.MIN_VALUE
 
 class ExternalGroupControllerIT(
     private val service: ServiceTestClient,
@@ -72,8 +68,6 @@ class ExternalGroupControllerIT(
             nameFn = { it.first },
             Pair(NAME_NOT_BLANK, createGroupCreationRequest(name = "")),
             Pair(NAME_MAX_LENGTH, createGroupCreationRequest(name = "name".repeat(10))),
-            Pair(COLOR_MIN_VALUE, createGroupCreationRequest(color = MIN_VALUE)),
-            Pair(COLOR_MAX_VALUE, createGroupCreationRequest(color = MAX_VALUE)),
             Pair(GROUP_CURRENCY_NOT_BLANK, createGroupCreationRequest(groupCurrencies = "")),
             Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "someCurrency")),
             Pair(ATTACHMENT_ID_NOT_BLANK, createGroupCreationRequest(attachmentId = "")),
@@ -170,7 +164,6 @@ class ExternalGroupControllerIT(
         val groupsId = listOf("group1", "group2", "group3")
         val ownersId = listOf("owner1", "owner2", "owner3")
         val groupsName = listOf("Group 1", "Group 2", "Group 3")
-        val groupsColor = listOf(123456L, 654321L, 111111L)
         val groupsAttachmentId = listOf("attachment1", "attachment2", "attachment3")
         val joinCodes = listOf("joinCode1", "joinCode2", "joinCode3")
 
@@ -179,7 +172,6 @@ class ExternalGroupControllerIT(
                 id = groupId,
                 ownerId = ownersId[index],
                 name = groupsName[index],
-                color = groupsColor[index],
                 attachmentId = groupsAttachmentId[index],
                 joinCode = joinCodes[index],
                 members = listOf(Member(userId = user.id), Member(userId = ownersId[index])),
@@ -196,7 +188,6 @@ class ExternalGroupControllerIT(
         response.shouldBody<ExternalUserGroupsResponse> {
             groups.map { it.groupId } shouldContainExactly groupsId
             groups.map { it.name } shouldContainExactly groupsName
-            groups.map { it.color } shouldContainExactly groupsColor
             groups.map { it.attachmentId } shouldContainExactly groupsAttachmentId
         }
     }
@@ -230,7 +221,6 @@ class ExternalGroupControllerIT(
         response.shouldBody<ExternalGroupResponse> {
             groupId shouldBe group.id
             name shouldBe group.name
-            color shouldBe group.color
             ownerId shouldBe group.ownerId
             members.map { it.userId } shouldContainExactly group.members.map { it.userId }
             acceptRequired shouldBe group.acceptRequired
