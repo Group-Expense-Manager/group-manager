@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus.OK
 import pl.edu.agh.gem.assertion.shouldBody
 import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
-import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.InternalGroupResponse
 import pl.edu.agh.gem.external.dto.InternalUserGroupsResponse
 import pl.edu.agh.gem.integration.BaseIntegrationSpec
@@ -17,7 +16,6 @@ import pl.edu.agh.gem.integration.ability.ServiceTestClient
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
-import pl.edu.agh.gem.internal.service.UserWithoutGroupException
 import pl.edu.agh.gem.util.createGroup
 
 class InternalGroupControllerIT(

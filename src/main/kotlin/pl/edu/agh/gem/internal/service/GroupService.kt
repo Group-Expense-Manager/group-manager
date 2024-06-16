@@ -55,8 +55,5 @@ class GroupService(
 class MissingGroupException(joinCode: String) :
     RuntimeException("Failed to find group with joinCode:$joinCode")
 
-class UserWithoutGroupException(userId: String) :
-    RuntimeException("User with id:$userId does not belong to any group")
-
 class UserAlreadyInGroupException(groupId: String, userId: String) :
     RuntimeException("User with id:$userId is already in group with joinCode:$groupId")

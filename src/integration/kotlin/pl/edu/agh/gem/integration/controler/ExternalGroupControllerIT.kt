@@ -31,7 +31,6 @@ import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
-import pl.edu.agh.gem.internal.service.UserWithoutGroupException
 import pl.edu.agh.gem.internal.validation.ValidationMessage.ATTACHMENT_ID_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_SUPPORTED
@@ -192,7 +191,7 @@ class ExternalGroupControllerIT(
         }
     }
 
-    should("return NOT_FOUND when user does not have any groups") {
+    should("return empty list when user does not have any groups") {
         // given
         val user = createGemUser()
 
@@ -200,10 +199,9 @@ class ExternalGroupControllerIT(
         val response = service.getUserGroups(user)
 
         // then
-        response shouldHaveHttpStatus NOT_FOUND
-        response shouldHaveErrors {
-            errors shouldHaveSize 1
-            errors.first().code shouldBe UserWithoutGroupException::class.simpleName
+        response shouldHaveHttpStatus OK
+        response.shouldBody<ExternalUserGroupsResponse> {
+            groups shouldHaveSize 0
         }
     }
 
