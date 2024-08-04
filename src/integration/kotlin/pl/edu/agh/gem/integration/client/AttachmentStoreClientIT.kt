@@ -8,9 +8,7 @@ import pl.edu.agh.gem.integration.BaseIntegrationSpec
 import pl.edu.agh.gem.integration.ability.stubInitGroupAttachment
 import pl.edu.agh.gem.internal.client.AttachmentStoreClient
 import pl.edu.agh.gem.internal.client.AttachmentStoreClientException
-import pl.edu.agh.gem.internal.client.CurrencyManagerClientException
 import pl.edu.agh.gem.internal.client.RetryableAttachmentStoreClientException
-import pl.edu.agh.gem.internal.client.RetryableCurrencyManagerClientException
 import pl.edu.agh.gem.util.createGroupAttachmentResponse
 
 class AttachmentStoreClientIT(
