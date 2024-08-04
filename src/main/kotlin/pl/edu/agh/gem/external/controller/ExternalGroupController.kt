@@ -15,11 +15,10 @@ import pl.edu.agh.gem.external.dto.ExternalGroupResponse
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
 import pl.edu.agh.gem.external.dto.GroupCreationResponse
-import pl.edu.agh.gem.external.dto.toDomain
 import pl.edu.agh.gem.external.dto.toExternalGroupResponse
 import pl.edu.agh.gem.external.dto.toExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.toGroupCreationResponse
-import pl.edu.agh.gem.internal.generator.CodeGenerator
+import pl.edu.agh.gem.external.dto.toNewGroup
 import pl.edu.agh.gem.internal.service.GroupService
 import pl.edu.agh.gem.media.InternalApiMediaType.APPLICATION_JSON_INTERNAL_VER_1
 import pl.edu.agh.gem.paths.Paths.EXTERNAL
@@ -29,7 +28,6 @@ import pl.edu.agh.gem.security.GemUserId
 @RequestMapping("$EXTERNAL/groups")
 class ExternalGroupController(
     private val groupService: GroupService,
-    private val codeGenerator: CodeGenerator,
 ) {
 
     @PostMapping(consumes = [APPLICATION_JSON_INTERNAL_VER_1], produces = [APPLICATION_JSON_INTERNAL_VER_1])
@@ -40,7 +38,7 @@ class ExternalGroupController(
         groupCreationRequest: GroupCreationRequest,
     ): GroupCreationResponse {
         return groupService.createGroup(
-            groupCreationRequest.toDomain(userId, codeGenerator.generateJoinCode()),
+            groupCreationRequest.toNewGroup(userId),
         ).toGroupCreationResponse()
     }
 

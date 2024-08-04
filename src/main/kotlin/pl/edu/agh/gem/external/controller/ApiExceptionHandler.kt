@@ -5,6 +5,7 @@ import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.HttpStatus.FORBIDDEN
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
@@ -18,6 +19,10 @@ import pl.edu.agh.gem.error.withDetails
 import pl.edu.agh.gem.error.withMessage
 import pl.edu.agh.gem.error.withUserMessage
 import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
+import pl.edu.agh.gem.internal.client.AttachmentStoreClientException
+import pl.edu.agh.gem.internal.client.CurrencyManagerClientException
+import pl.edu.agh.gem.internal.client.RetryableAttachmentStoreClientException
+import pl.edu.agh.gem.internal.client.RetryableCurrencyManagerClientException
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
 import pl.edu.agh.gem.validator.ValidatorsException
@@ -53,6 +58,34 @@ class ApiExceptionHandler {
         exception: UserWithoutGroupAccessException,
     ): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), FORBIDDEN)
+    }
+
+    @ExceptionHandler(CurrencyManagerClientException::class)
+    fun handleCurrencyManagerClientException(
+        exception: CurrencyManagerClientException,
+    ): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(RetryableCurrencyManagerClientException::class)
+    fun handleRetryableCurrencyManagerClientException(
+        exception: RetryableCurrencyManagerClientException,
+    ): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(AttachmentStoreClientException::class)
+    fun handleAttachmentStoreClientException(
+        exception: AttachmentStoreClientException,
+    ): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(RetryableAttachmentStoreClientException::class)
+    fun handleRetryableAttachmentStoreClientException(
+        exception: RetryableAttachmentStoreClientException,
+    ): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
 
     private fun handleValidatorException(exception: ValidatorsException): SimpleErrorsHolder {

@@ -11,28 +11,43 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import pl.edu.agh.gem.helper.user.DummyUser.USER_ID
+import pl.edu.agh.gem.internal.client.AttachmentStoreClient
 import pl.edu.agh.gem.internal.client.CurrencyManagerClient
+import pl.edu.agh.gem.internal.generator.CodeGenerator
 import pl.edu.agh.gem.internal.model.Currency
+import pl.edu.agh.gem.internal.model.GroupAttachment
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.util.createGroup
+import pl.edu.agh.gem.util.createNewGroup
 import pl.edu.agh.gem.validator.ValidatorsException
 
 class GroupServiceTest : ShouldSpec({
 
     val currencyManagerClient = mock<CurrencyManagerClient>()
+    val attachmentStoreClient = mock<AttachmentStoreClient>()
     val groupRepository = mock<GroupRepository>()
-    val groupService = GroupService(currencyManagerClient, groupRepository)
+    val codeGenerator = mock<CodeGenerator>()
+    val groupService = GroupService(
+        currencyManagerClient = currencyManagerClient,
+        attachmentStoreClient = attachmentStoreClient,
+        groupRepository = groupRepository,
+        codeGenerator = codeGenerator,
+    )
 
     should("create group successfully") {
         // given
+        val newGroup = createNewGroup()
         val group = createGroup()
+        val groupAttachment = GroupAttachment(group.attachmentId)
         val currencies = listOf("USD", "EUR", "PLN").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
         whenever(groupRepository.insertWithUniqueJoinCode(group)).thenReturn(group)
+        whenever(attachmentStoreClient.getGroupInitAttachment(newGroup.id, newGroup.ownerId)).thenReturn(groupAttachment)
+        whenever(codeGenerator.generateJoinCode()).thenReturn(group.joinCode)
 
         // when
-        val result = groupService.createGroup(group)
+        val result = groupService.createGroup(newGroup)
 
         // then
         verify(groupRepository, times(1)).insertWithUniqueJoinCode(group)
@@ -41,15 +56,15 @@ class GroupServiceTest : ShouldSpec({
 
     should("throw ValidatorsException when group creation fails") {
         // given
-        val group = createGroup()
+        val newGroup = createNewGroup()
         val currencies = listOf("USD", "EUR", "CZK").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
 
         // when & then
         shouldThrow<ValidatorsException> {
-            groupService.createGroup(group)
+            groupService.createGroup(newGroup)
         }
-        verify(groupRepository, times(0)).insertWithUniqueJoinCode(group)
+        verify(groupRepository, times(0)).insertWithUniqueJoinCode(any())
     }
 
     should("join group successfully") {

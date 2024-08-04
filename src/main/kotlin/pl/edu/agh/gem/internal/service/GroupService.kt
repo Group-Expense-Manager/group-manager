@@ -1,9 +1,13 @@
 package pl.edu.agh.gem.internal.service
 
 import org.springframework.stereotype.Service
+import pl.edu.agh.gem.internal.client.AttachmentStoreClient
 import pl.edu.agh.gem.internal.client.CurrencyManagerClient
+import pl.edu.agh.gem.internal.generator.CodeGenerator
 import pl.edu.agh.gem.internal.model.Group
 import pl.edu.agh.gem.internal.model.Member
+import pl.edu.agh.gem.internal.model.NewGroup
+import pl.edu.agh.gem.internal.model.toGroup
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.validation.CurrenciesValidator
 import pl.edu.agh.gem.internal.validation.GroupDataWrapper
@@ -13,19 +17,25 @@ import pl.edu.agh.gem.validator.ValidatorsException
 @Service
 class GroupService(
     private val currencyManagerClient: CurrencyManagerClient,
+    private val attachmentStoreClient: AttachmentStoreClient,
     private val groupRepository: GroupRepository,
+    private val codeGenerator: CodeGenerator,
+
 ) {
 
     private val currenciesValidator = CurrenciesValidator()
     private val createGroupValidators = validatorsOf(currenciesValidator)
 
-    fun createGroup(group: Group): Group {
+    fun createGroup(newGroup: NewGroup): Group {
         createGroupValidators
-            .getFailedValidations(createGroupDataWrapper(group))
+            .getFailedValidations(createGroupDataWrapper(newGroup))
             .takeIf {
                 it.isNotEmpty()
             }
             ?.also { throw ValidatorsException(it) }
+        val attachment = attachmentStoreClient.getGroupInitAttachment(newGroup.id, newGroup.ownerId)
+        val joinCode = codeGenerator.generateJoinCode()
+        val group = newGroup.toGroup(attachment.id, joinCode)
         return groupRepository.insertWithUniqueJoinCode(group)
     }
 
@@ -43,8 +53,8 @@ class GroupService(
         return groupRepository.findByUserId(userId)
     }
 
-    private fun createGroupDataWrapper(group: Group): GroupDataWrapper {
-        return GroupDataWrapper(group, currencyManagerClient.getCurrencies())
+    private fun createGroupDataWrapper(newGroup: NewGroup): GroupDataWrapper {
+        return GroupDataWrapper(newGroup, currencyManagerClient.getCurrencies())
     }
 
     private fun Group.withMember(userId: String): Group {
