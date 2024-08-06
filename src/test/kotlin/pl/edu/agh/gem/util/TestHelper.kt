@@ -2,6 +2,7 @@ package pl.edu.agh.gem.util
 
 import pl.edu.agh.gem.external.dto.AvailableCurrenciesResponse
 import pl.edu.agh.gem.external.dto.CurrencyResponse
+import pl.edu.agh.gem.external.dto.GroupAttachmentResponse
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
 import pl.edu.agh.gem.external.persistence.CurrencyEntity
 import pl.edu.agh.gem.external.persistence.GroupEntity
@@ -10,23 +11,28 @@ import pl.edu.agh.gem.internal.model.Currencies
 import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.internal.model.Group
 import pl.edu.agh.gem.internal.model.Member
+import pl.edu.agh.gem.internal.model.NewGroup
 
 fun createGroupCreationRequest(
     name: String = "groupName",
     acceptRequired: Boolean = false,
     groupCurrencies: String = "PLN",
-    attachmentId: String = "attachmentId",
 ) = GroupCreationRequest(
     name = name,
     acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
-    attachmentId = attachmentId,
 )
 
 fun createAvailableCurrenciesResponse(
     currencies: List<CurrencyResponse> = listOf(createCurrencyResponse()),
 ) = AvailableCurrenciesResponse(
     currencies = currencies,
+)
+
+fun createGroupAttachmentResponse(
+    attachmentId: String = "attachmentId",
+) = GroupAttachmentResponse(
+    id = attachmentId,
 )
 
 fun createCurrencyResponse(
@@ -53,6 +59,22 @@ fun createGroup(
     groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
     joinCode = joinCode,
+)
+
+fun createNewGroup(
+    id: String = "groupId",
+    name: String = "groupName",
+    ownerId: String = "ownerId",
+    members: List<Member> = listOf(Member("memberId")),
+    acceptRequired: Boolean = false,
+    groupCurrencies: Currencies = listOf(Currency("PLN")),
+) = NewGroup(
+    id = id,
+    name = name,
+    ownerId = ownerId,
+    members = members,
+    acceptRequired = acceptRequired,
+    groupCurrencies = groupCurrencies,
 )
 
 fun createGroupEntity(

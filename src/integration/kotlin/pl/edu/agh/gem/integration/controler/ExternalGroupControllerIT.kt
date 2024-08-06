@@ -27,11 +27,11 @@ import pl.edu.agh.gem.helper.user.createGemUser
 import pl.edu.agh.gem.integration.BaseIntegrationSpec
 import pl.edu.agh.gem.integration.ability.ServiceTestClient
 import pl.edu.agh.gem.integration.ability.stubCurrencyManagerCurrencies
+import pl.edu.agh.gem.integration.ability.stubInitGroupAttachment
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
-import pl.edu.agh.gem.internal.validation.ValidationMessage.ATTACHMENT_ID_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_SUPPORTED
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTERN
@@ -39,6 +39,7 @@ import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
 import pl.edu.agh.gem.util.createAvailableCurrenciesResponse
 import pl.edu.agh.gem.util.createGroup
+import pl.edu.agh.gem.util.createGroupAttachmentResponse
 import pl.edu.agh.gem.util.createGroupCreationRequest
 
 class ExternalGroupControllerIT(
@@ -49,6 +50,8 @@ class ExternalGroupControllerIT(
         // given
         val user = createGemUser()
         val currenciesResponse = createAvailableCurrenciesResponse()
+        val attachment = createGroupAttachmentResponse()
+        stubInitGroupAttachment(attachment, user.id)
         stubCurrencyManagerCurrencies(currenciesResponse)
         val createGroupRequest = createGroupCreationRequest()
 
@@ -69,7 +72,6 @@ class ExternalGroupControllerIT(
             Pair(NAME_MAX_LENGTH, createGroupCreationRequest(name = "name".repeat(10))),
             Pair(GROUP_CURRENCY_NOT_BLANK, createGroupCreationRequest(groupCurrencies = "")),
             Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "someCurrency")),
-            Pair(ATTACHMENT_ID_NOT_BLANK, createGroupCreationRequest(attachmentId = "")),
         ) { (expectedMessage, createGroupRequest) ->
             // given
             val user = createGemUser()

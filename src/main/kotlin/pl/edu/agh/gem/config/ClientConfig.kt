@@ -12,16 +12,32 @@ import java.time.Duration
 class ClientConfig {
     @Bean
     @Qualifier("CurrencyManagerRestTemplate")
-    fun exampleRestTemplate(currencyManagerProperties: CurrencyManagerProperties): RestTemplate {
+    fun currencyManagerRestTemplate(currencyManagerProperties: CurrencyManagerProperties): RestTemplate {
         return RestTemplateBuilder()
             .setConnectTimeout(currencyManagerProperties.connectTimeout)
             .setReadTimeout(currencyManagerProperties.readTimeout)
+            .build()
+    }
+
+    @Bean
+    @Qualifier("AttachmentStoreRestTemplate")
+    fun attachmentStoreRestTemplate(attachmentStoreProperties: AttachmentStoreProperties): RestTemplate {
+        return RestTemplateBuilder()
+            .setConnectTimeout(attachmentStoreProperties.connectTimeout)
+            .setReadTimeout(attachmentStoreProperties.readTimeout)
             .build()
     }
 }
 
 @ConfigurationProperties(prefix = "currency-manager")
 data class CurrencyManagerProperties(
+    val url: String,
+    val connectTimeout: Duration,
+    val readTimeout: Duration,
+)
+
+@ConfigurationProperties(prefix = "attachment-store")
+data class AttachmentStoreProperties(
     val url: String,
     val connectTimeout: Duration,
     val readTimeout: Duration,
