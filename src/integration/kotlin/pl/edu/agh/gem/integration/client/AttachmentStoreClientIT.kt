@@ -14,7 +14,7 @@ import pl.edu.agh.gem.util.createGroupAttachmentResponse
 class AttachmentStoreClientIT(
     private val attachmentStoreClient: AttachmentStoreClient,
 ) : BaseIntegrationSpec({
-    should("get available currencies") {
+    should("get group init attachment") {
         // given
         val attachment = createGroupAttachmentResponse()
         val userId = "userId"
@@ -28,7 +28,7 @@ class AttachmentStoreClientIT(
         result.id shouldBe attachment.id
     }
 
-    should("throw CurrencyManagerClientException when we send bad request") {
+    should("throw AttachmentStoreClientException when we send bad request") {
         // given
         val attachment = createGroupAttachmentResponse()
         val userId = "userId"
@@ -41,7 +41,7 @@ class AttachmentStoreClientIT(
         }
     }
 
-    should("throw RetryableCurrencyManagerClientException when client has internal error") {
+    should("throw RetryableAttachmentStoreClientException when client has internal error") {
         // given
         val attachment = createGroupAttachmentResponse()
         val userId = "userId"
