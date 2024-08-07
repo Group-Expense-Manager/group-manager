@@ -3,6 +3,7 @@ package pl.edu.agh.gem.external.controller
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.OK
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -69,5 +70,14 @@ class ExternalGroupController(
         return groupService.getGroup(groupId).takeIf { it.members.any { member -> member.userId == userId } }
             ?.toExternalGroupResponse()
             ?: throw UserWithoutGroupAccessException(userId)
+    }
+
+    @DeleteMapping("/{groupId}")
+    @ResponseStatus(OK)
+    fun deleteGroup(
+        @GemUserId userId: String,
+        @PathVariable groupId: String,
+    ) {
+        groupService.removeGroup(groupId, userId)
     }
 }

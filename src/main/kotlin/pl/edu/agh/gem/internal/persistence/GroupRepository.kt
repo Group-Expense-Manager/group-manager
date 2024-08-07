@@ -8,4 +8,5 @@ interface GroupRepository {
     fun save(group: Group): Group
     fun findById(groupId: String): Group?
     fun findByUserId(userId: String): List<Group>
+    fun remove(group: Group)
 }

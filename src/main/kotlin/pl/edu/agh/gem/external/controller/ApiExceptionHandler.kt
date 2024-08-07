@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -23,6 +24,7 @@ import pl.edu.agh.gem.internal.client.AttachmentStoreClientException
 import pl.edu.agh.gem.internal.client.CurrencyManagerClientException
 import pl.edu.agh.gem.internal.client.RetryableAttachmentStoreClientException
 import pl.edu.agh.gem.internal.client.RetryableCurrencyManagerClientException
+import pl.edu.agh.gem.internal.service.DeleteGroupValidationException
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
 import pl.edu.agh.gem.validator.ValidatorsException
@@ -41,6 +43,11 @@ class ApiExceptionHandler {
     @ExceptionHandler(ValidatorsException::class)
     fun handleValidatorsException(exception: ValidatorsException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleValidatorException(exception), BAD_REQUEST)
+    }
+
+    @ExceptionHandler(DeleteGroupValidationException::class)
+    fun handleDeleteGroupValidationException(exception: DeleteGroupValidationException): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleValidatorException(exception), UNPROCESSABLE_ENTITY)
     }
 
     @ExceptionHandler(MissingGroupException::class)

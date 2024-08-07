@@ -98,7 +98,6 @@ class GroupRepositoryIT(
 
         // when
         val foundGroup = groupRepository.findById(group.id)
-
         // then
         foundGroup.shouldNotBeNull()
         foundGroup.shouldBe(group)
@@ -110,5 +109,17 @@ class GroupRepositoryIT(
 
         // then
         foundGroup.shouldBeNull()
+    }
+
+    should("remove group correctly") {
+        // given
+        val group = createGroup()
+        groupRepository.save(group)
+
+        // when
+        groupRepository.remove(group)
+
+        // then
+        groupRepository.findById(group.id).shouldBeNull()
     }
 },)

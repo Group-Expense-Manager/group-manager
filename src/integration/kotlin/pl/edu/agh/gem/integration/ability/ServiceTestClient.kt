@@ -69,4 +69,11 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
             .headers { it.withAppAcceptType() }
             .exchange()
     }
+
+    fun removeGroup(user: GemUser, groupId: String): ResponseSpec {
+        return webClient.delete()
+            .uri(URI("$EXTERNAL/groups/$groupId"))
+            .headers { it.withValidatedUser(user) }
+            .exchange()
+    }
 }

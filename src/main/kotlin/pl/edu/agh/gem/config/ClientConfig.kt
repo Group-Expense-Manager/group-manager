@@ -27,6 +27,15 @@ class ClientConfig {
             .setReadTimeout(attachmentStoreProperties.readTimeout)
             .build()
     }
+
+    @Bean
+    @Qualifier("FinanceAdapterRestTemplate")
+    fun financeAdapterRestTemplate(financeAdapterProperties: FinanceAdapterProperties): RestTemplate {
+        return RestTemplateBuilder()
+            .setConnectTimeout(financeAdapterProperties.connectTimeout)
+            .setReadTimeout(financeAdapterProperties.readTimeout)
+            .build()
+    }
 }
 
 @ConfigurationProperties(prefix = "currency-manager")
@@ -38,6 +47,13 @@ data class CurrencyManagerProperties(
 
 @ConfigurationProperties(prefix = "attachment-store")
 data class AttachmentStoreProperties(
+    val url: String,
+    val connectTimeout: Duration,
+    val readTimeout: Duration,
+)
+
+@ConfigurationProperties(prefix = "finance-adapter")
+data class FinanceAdapterProperties(
     val url: String,
     val connectTimeout: Duration,
     val readTimeout: Duration,
