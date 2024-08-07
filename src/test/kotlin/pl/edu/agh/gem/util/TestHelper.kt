@@ -188,7 +188,8 @@ fun createArchiveGroup(
 ) = ArchiveGroup(
     id = id,
     name = name,
-    ownerId = ownerId, members = members,
+    ownerId = ownerId,
+    members = members,
     acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
