@@ -105,7 +105,7 @@ class ApiExceptionHandler {
     }
 
     @ExceptionHandler(RetryableFinanceAdapterClientException::class)
-    fun handleRetryableRetryableFinanceAdapterClientException(
+    fun handleRetryableFinanceAdapterClientException(
         exception: RetryableFinanceAdapterClientException,
     ): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
