@@ -22,8 +22,10 @@ import pl.edu.agh.gem.error.withUserMessage
 import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
 import pl.edu.agh.gem.internal.client.AttachmentStoreClientException
 import pl.edu.agh.gem.internal.client.CurrencyManagerClientException
+import pl.edu.agh.gem.internal.client.FinanceAdapterClientException
 import pl.edu.agh.gem.internal.client.RetryableAttachmentStoreClientException
 import pl.edu.agh.gem.internal.client.RetryableCurrencyManagerClientException
+import pl.edu.agh.gem.internal.client.RetryableFinanceAdapterClientException
 import pl.edu.agh.gem.internal.service.DeleteGroupValidationException
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
@@ -91,6 +93,20 @@ class ApiExceptionHandler {
     @ExceptionHandler(RetryableAttachmentStoreClientException::class)
     fun handleRetryableAttachmentStoreClientException(
         exception: RetryableAttachmentStoreClientException,
+    ): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(FinanceAdapterClientException::class)
+    fun handleFinanceAdapterClientException(
+        exception: AttachmentStoreClientException,
+    ): ResponseEntity<SimpleErrorsHolder> {
+        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(RetryableFinanceAdapterClientException::class)
+    fun handleRetryableRetryableFinanceAdapterClientException(
+        exception: RetryableFinanceAdapterClientException,
     ): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
