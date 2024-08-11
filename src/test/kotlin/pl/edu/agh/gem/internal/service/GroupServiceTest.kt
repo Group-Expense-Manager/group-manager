@@ -3,6 +3,7 @@ package pl.edu.agh.gem.internal.service
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import org.mockito.kotlin.any
@@ -16,6 +17,7 @@ import pl.edu.agh.gem.internal.client.CurrencyManagerClient
 import pl.edu.agh.gem.internal.client.FinanceAdapterClient
 import pl.edu.agh.gem.internal.generator.CodeGenerator
 import pl.edu.agh.gem.internal.model.Currency
+import pl.edu.agh.gem.internal.model.Group
 import pl.edu.agh.gem.internal.model.GroupAttachment
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
@@ -23,6 +25,7 @@ import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.util.createBalance
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupBalance
+import pl.edu.agh.gem.util.createGroupUpdate
 import pl.edu.agh.gem.util.createNewGroup
 import pl.edu.agh.gem.util.createUserBalance
 import pl.edu.agh.gem.validator.ValidatorsException
@@ -50,7 +53,7 @@ class GroupServiceTest : ShouldSpec({
         val newGroup = createNewGroup()
         val group = createGroup()
         val groupAttachment = GroupAttachment(group.attachmentId)
-        val currencies = listOf("USD", "EUR", "PLN").map { Currency(it) }
+        val currencies = setOf("USD", "EUR", "PLN").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
         whenever(groupRepository.insertWithUniqueJoinCode(group)).thenReturn(group)
         whenever(attachmentStoreClient.getGroupInitAttachment(newGroup.id, newGroup.ownerId)).thenReturn(groupAttachment)
@@ -67,7 +70,7 @@ class GroupServiceTest : ShouldSpec({
     should("throw ValidatorsException when group creation fails") {
         // given
         val newGroup = createNewGroup()
-        val currencies = listOf("USD", "EUR", "CZK").map { Currency(it) }
+        val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
 
         // when & then
@@ -83,7 +86,7 @@ class GroupServiceTest : ShouldSpec({
         val userId = "userId"
         val group = createGroup(joinCode = joinCode)
         whenever(groupRepository.findByJoinCode(joinCode)).thenReturn(group)
-        whenever(groupRepository.save(any())).thenReturn(group.copy(members = listOf(Member(userId))))
+        whenever(groupRepository.save(any())).thenReturn(group.copy(members = setOf(Member(userId))))
 
         // when
         val result = groupService.joinGroup(joinCode, userId)
@@ -112,7 +115,7 @@ class GroupServiceTest : ShouldSpec({
         // given
         val joinCode = "uniqueJoinCode"
         val userId = "userId"
-        val group = createGroup(joinCode = joinCode, members = listOf(Member(userId)))
+        val group = createGroup(joinCode = joinCode, members = setOf(Member(userId)))
         whenever(groupRepository.findByJoinCode(joinCode)).thenReturn(group)
 
         // when & then
@@ -169,10 +172,11 @@ class GroupServiceTest : ShouldSpec({
         // given
         val groupId = "groupId"
         val authorId = "authorId"
-        val group = createGroup(id = groupId, ownerId = authorId)
+        val group = createGroup(id = groupId, ownerId = authorId, members = setOf(Member(userId = authorId)))
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         val groupBalanceResponse = createGroupBalance(groupId = group.id)
         whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
+
         // when
         groupService.removeGroup(groupId, authorId)
 
@@ -186,7 +190,7 @@ class GroupServiceTest : ShouldSpec({
         val groupId = "groupId"
         val userId = "userId"
         val authorId = "owner"
-        val group = createGroup(members = listOf(Member(userId = authorId), Member(userId = userId)), ownerId = authorId)
+        val group = createGroup(members = setOf(Member(userId = authorId), Member(userId = userId)), ownerId = authorId)
         val groupBalanceResponse = createGroupBalance(groupId = group.id)
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
@@ -203,7 +207,7 @@ class GroupServiceTest : ShouldSpec({
         // given
         val groupId = "groupId"
         val authorId = "owner"
-        val group = createGroup(members = listOf(Member(userId = authorId)), ownerId = authorId)
+        val group = createGroup(members = setOf(Member(userId = authorId)), ownerId = authorId)
         val groupBalanceResponse = createGroupBalance(
             groupId = group.id,
             usersBalance = listOf(
@@ -227,5 +231,59 @@ class GroupServiceTest : ShouldSpec({
         }
         verify(groupRepository, times(0)).remove(any())
         verify(archiveGroupRepository, times(0)).save(any())
+    }
+
+    should("update group successfully") {
+        // given
+        val groupId = "groupId"
+        val authorId = "authorId"
+        val group = createGroup(
+            id = groupId,
+            name = "OldName",
+            acceptRequired = false,
+            currencies = setOf(Currency("PLN")),
+            ownerId = authorId,
+            members = setOf(Member(userId = authorId)),
+        )
+        val groupUpdate = createGroupUpdate(
+            id = groupId,
+            name = "NewName",
+            acceptRequired = true,
+            currencies = setOf(Currency("EUR")),
+        )
+        whenever(groupRepository.findById(groupId)).thenReturn(group)
+        val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
+        whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
+        whenever(groupRepository.save(any())).thenAnswer { it.getArgument<Group>(0) }
+
+        // when
+        val result = groupService.updateGroup(groupUpdate, authorId)
+
+        // then
+        verify(groupRepository, times(1)).findById(groupId)
+        verify(groupRepository, times(1)).save(any())
+        result.name shouldBe groupUpdate.name
+        result.acceptRequired shouldBe groupUpdate.acceptRequired
+        result.currencies shouldContainExactly groupUpdate.currencies
+    }
+
+    should("throw ValidatorsException when group update fails validation") {
+        // given
+        val groupId = "groupId"
+        val authorId = "authorId"
+        val group = createGroup(id = groupId)
+        val groupUpdate = createGroupUpdate(
+            currencies = setOf("INVALID").map { Currency(it) }.toSet(),
+        )
+        whenever(groupRepository.findById(groupId)).thenReturn(group)
+        val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
+        whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
+
+        // when & then
+        shouldThrow<ValidatorsException> {
+            groupService.updateGroup(groupUpdate, authorId)
+        }
+        verify(groupRepository, times(1)).findById(groupId)
+        verify(groupRepository, times(0)).save(any())
     }
 },)

@@ -15,7 +15,7 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
         val groups = listOf(
             createGroup(
                 ownerId = userId,
-                members = listOf(Member(userId = userId)),
+                members = setOf(Member(userId = userId)),
             ),
         )
 
@@ -43,7 +43,7 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
                 ownerId = userId,
                 name = groupsName[index],
                 attachmentId = groupsAttachmentId[index],
-                members = listOf(Member(userId = userId)),
+                members = setOf(Member(userId = userId)),
             )
         }
         // when

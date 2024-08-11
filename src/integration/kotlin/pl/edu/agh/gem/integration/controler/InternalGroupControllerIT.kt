@@ -24,7 +24,7 @@ class InternalGroupControllerIT(
 ) : BaseIntegrationSpec({
     should("get group successfully") {
         // given
-        val members = listOf(
+        val members = setOf(
             Member(userId = "user1"),
             Member(userId = "user2"),
         )
@@ -38,7 +38,7 @@ class InternalGroupControllerIT(
         response shouldHaveHttpStatus OK
         response.shouldBody<InternalGroupResponse> {
             members.map { it.userId } shouldContainExactly members.map { it.userId }
-            groupCurrencies.map { it.code } shouldContainExactly group.groupCurrencies.map { it.code }
+            groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
             acceptRequired shouldBe group.acceptRequired
         }
     }
@@ -75,7 +75,7 @@ class InternalGroupControllerIT(
                 name = groupsName[index],
                 attachmentId = groupsAttachmentId[index],
                 joinCode = joinCodes[index],
-                members = listOf(Member(userId = userId), Member(userId = ownersId[index])),
+                members = setOf(Member(userId = userId), Member(userId = ownersId[index])),
             )
         }
 

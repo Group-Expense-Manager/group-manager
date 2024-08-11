@@ -11,7 +11,7 @@ class GroupMembersResponseTest : ShouldSpec({
     should("correctly map Group to GroupMembersResponse") {
         // given
         val group = createGroup(
-            members = listOf(
+            members = setOf(
                 Member(userId = "user1"),
                 Member(userId = "user2"),
                 Member(userId = "user3"),
@@ -23,13 +23,13 @@ class GroupMembersResponseTest : ShouldSpec({
 
         // then
         groupMembersResponse.also {
-            it.members.map { memberResponse -> memberResponse.id } shouldContainExactly listOf("user1", "user2", "user3")
+            it.members.map { memberResponse -> memberResponse.id } shouldContainExactly setOf("user1", "user2", "user3")
         }
     }
 
     should("return an empty list when Group has no members") {
         // given
-        val group = createGroup(members = listOf())
+        val group = createGroup(members = setOf())
 
         // when
         val groupMembersResponse = group.createGroupMembersResponse()

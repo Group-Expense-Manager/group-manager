@@ -1,9 +1,9 @@
 package pl.edu.agh.gem.internal.client
 
-import pl.edu.agh.gem.internal.model.Currencies
+import pl.edu.agh.gem.internal.model.Currency
 
 interface CurrencyManagerClient {
-    fun getCurrencies(): Currencies
+    fun getCurrencies(): List<Currency>
 }
 
 class CurrencyManagerClientException(override val message: String?) : RuntimeException()

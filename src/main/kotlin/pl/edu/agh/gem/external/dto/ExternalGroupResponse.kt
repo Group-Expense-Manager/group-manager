@@ -27,7 +27,7 @@ fun Group.toExternalGroupResponse() = ExternalGroupResponse(
     ownerId = ownerId,
     members = members.map { MemberDto(it.userId) },
     acceptRequired = acceptRequired,
-    groupCurrencies = groupCurrencies.map { CurrencyDto(it.code) },
+    groupCurrencies = currencies.map { CurrencyDto(it.code) },
     joinCode = joinCode,
     attachmentId = attachmentId,
 )

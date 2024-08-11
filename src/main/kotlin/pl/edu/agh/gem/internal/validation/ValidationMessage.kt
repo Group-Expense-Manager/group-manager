@@ -10,4 +10,5 @@ object ValidationMessage {
 
     const val GROUP_BALANCE_NOT_ZERO = "Group balance must be zero"
     const val MISSING_PERMISSION = "Missing permission"
+    const val USER_NOT_FOUND = "User not found"
 }
