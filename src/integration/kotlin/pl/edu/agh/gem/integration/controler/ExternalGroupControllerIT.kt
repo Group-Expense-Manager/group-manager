@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import pl.edu.agh.gem.assertion.shouldBody
 import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
@@ -27,8 +28,10 @@ import pl.edu.agh.gem.helper.user.createGemUser
 import pl.edu.agh.gem.integration.BaseIntegrationSpec
 import pl.edu.agh.gem.integration.ability.ServiceTestClient
 import pl.edu.agh.gem.integration.ability.stubCurrencyManagerCurrencies
+import pl.edu.agh.gem.integration.ability.stubGroupBalance
 import pl.edu.agh.gem.integration.ability.stubInitGroupAttachment
 import pl.edu.agh.gem.internal.model.Member
+import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
@@ -38,13 +41,18 @@ import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
 import pl.edu.agh.gem.util.createAvailableCurrenciesResponse
+import pl.edu.agh.gem.util.createBalanceDto
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupAttachmentResponse
+import pl.edu.agh.gem.util.createGroupBalanceResponse
 import pl.edu.agh.gem.util.createGroupCreationRequest
+import pl.edu.agh.gem.util.createUserBalanceDto
+import java.math.BigDecimal.TEN
 
 class ExternalGroupControllerIT(
     private val service: ServiceTestClient,
     private val groupRepository: GroupRepository,
+    private val archivedGroupRepository: ArchiveGroupRepository,
 ) : BaseIntegrationSpec({
     should("create group") {
         // given
@@ -261,5 +269,89 @@ class ExternalGroupControllerIT(
             errors shouldHaveSize 1
             errors.first().code shouldBe UserWithoutGroupAccessException::class.simpleName
         }
+    }
+
+    should("delete group") {
+        // given
+        val user = createGemUser()
+        val group = createGroup(members = listOf(Member(userId = user.id)), ownerId = user.id)
+        groupRepository.save(group)
+        val groupBalanceResponse = createGroupBalanceResponse(groupId = group.id)
+        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
+
+        // when
+        val response = service.removeGroup(user, group.id)
+
+        // then
+        response shouldHaveHttpStatus OK
+        val existingGroup = groupRepository.findById(group.id)
+        existingGroup.shouldBeNull()
+        val archivedGroup = archivedGroupRepository.findById(group.id)
+        archivedGroup.shouldNotBeNull()
+        archivedGroup.id shouldBe group.id
+    }
+
+    should("block delete group when user is not the owner") {
+        // given
+        val user = createGemUser()
+        val authorId = "owner"
+        val group = createGroup(members = listOf(Member(userId = authorId), Member(userId = user.id)), ownerId = authorId)
+        groupRepository.save(group)
+        val groupBalanceResponse = createGroupBalanceResponse(groupId = group.id)
+        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
+
+        // when
+        val response = service.removeGroup(user, group.id)
+
+        // then
+        response shouldHaveHttpStatus UNPROCESSABLE_ENTITY
+        val existingGroup = groupRepository.findById(group.id)
+        existingGroup.shouldNotBeNull()
+        val archivedGroup = archivedGroupRepository.findById(group.id)
+        archivedGroup.shouldBeNull()
+    }
+
+    should("block delete group when balance is not zero") {
+        // given
+        val user = createGemUser()
+        val group = createGroup(members = listOf(Member(userId = user.id)), ownerId = user.id)
+        groupRepository.save(group)
+        val groupBalanceResponse = createGroupBalanceResponse(
+            groupId = group.id,
+            usersBalance = listOf(
+                createUserBalanceDto(
+                    userId = user.id,
+                    balance = listOf(
+                        createBalanceDto(
+                            currency = "PLN",
+                            amount = TEN,
+                        ),
+                    ),
+                ),
+            ),
+        )
+        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
+
+        // when
+        val response = service.removeGroup(user, group.id)
+
+        // then
+        response shouldHaveHttpStatus UNPROCESSABLE_ENTITY
+        val existingGroup = groupRepository.findById(group.id)
+        existingGroup.shouldNotBeNull()
+        val archivedGroup = archivedGroupRepository.findById(group.id)
+        archivedGroup.shouldBeNull()
+    }
+
+    should("block delete group when group does not exist") {
+        // given
+        val user = createGemUser()
+        val group = createGroup(members = listOf(Member(userId = user.id)), ownerId = user.id)
+
+        // when
+        val response = service.removeGroup(user, group.id)
+
+        // then
+        response shouldHaveHttpStatus NOT_FOUND
     }
 },)

@@ -13,26 +13,36 @@ import org.mockito.kotlin.whenever
 import pl.edu.agh.gem.helper.user.DummyUser.USER_ID
 import pl.edu.agh.gem.internal.client.AttachmentStoreClient
 import pl.edu.agh.gem.internal.client.CurrencyManagerClient
+import pl.edu.agh.gem.internal.client.FinanceAdapterClient
 import pl.edu.agh.gem.internal.generator.CodeGenerator
 import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.internal.model.GroupAttachment
 import pl.edu.agh.gem.internal.model.Member
+import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
 import pl.edu.agh.gem.internal.persistence.GroupRepository
+import pl.edu.agh.gem.util.createBalance
 import pl.edu.agh.gem.util.createGroup
+import pl.edu.agh.gem.util.createGroupBalance
 import pl.edu.agh.gem.util.createNewGroup
+import pl.edu.agh.gem.util.createUserBalance
 import pl.edu.agh.gem.validator.ValidatorsException
+import java.math.BigDecimal.TEN
 
 class GroupServiceTest : ShouldSpec({
 
     val currencyManagerClient = mock<CurrencyManagerClient>()
     val attachmentStoreClient = mock<AttachmentStoreClient>()
     val groupRepository = mock<GroupRepository>()
+    val archiveGroupRepository = mock<ArchiveGroupRepository>()
     val codeGenerator = mock<CodeGenerator>()
+    val financeAdapterClient = mock<FinanceAdapterClient>()
     val groupService = GroupService(
         currencyManagerClient = currencyManagerClient,
         attachmentStoreClient = attachmentStoreClient,
         groupRepository = groupRepository,
+        archiveGroupRepository = archiveGroupRepository,
         codeGenerator = codeGenerator,
+        financeAdapterClient = financeAdapterClient,
     )
 
     should("create group successfully") {
@@ -153,5 +163,69 @@ class GroupServiceTest : ShouldSpec({
         result shouldHaveSize 2
         result shouldContain group1
         result shouldContain group2
+    }
+
+    should("remove group successfully") {
+        // given
+        val groupId = "groupId"
+        val authorId = "authorId"
+        val group = createGroup(id = groupId, ownerId = authorId)
+        whenever(groupRepository.findById(groupId)).thenReturn(group)
+        val groupBalanceResponse = createGroupBalance(groupId = group.id)
+        whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
+        // when
+        groupService.removeGroup(groupId, authorId)
+
+        // then
+        verify(groupRepository, times(1)).remove(group)
+        verify(archiveGroupRepository, times(1)).save(group)
+    }
+
+    should("throw DeleteGroupValidationException when group removal fails validation for authorId") {
+        // given
+        val groupId = "groupId"
+        val userId = "userId"
+        val authorId = "owner"
+        val group = createGroup(members = listOf(Member(userId = authorId), Member(userId = userId)), ownerId = authorId)
+        val groupBalanceResponse = createGroupBalance(groupId = group.id)
+        whenever(groupRepository.findById(groupId)).thenReturn(group)
+        whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
+
+        // when & then
+        shouldThrow<DeleteGroupValidationException> {
+            groupService.removeGroup(groupId, userId)
+        }
+        verify(groupRepository, times(0)).remove(any())
+        verify(archiveGroupRepository, times(0)).save(any())
+    }
+
+    should("throw DeleteGroupValidationException when group removal fails validation for balance") {
+        // given
+        val groupId = "groupId"
+        val authorId = "owner"
+        val group = createGroup(members = listOf(Member(userId = authorId)), ownerId = authorId)
+        val groupBalanceResponse = createGroupBalance(
+            groupId = group.id,
+            usersBalance = listOf(
+                createUserBalance(
+                    userId = authorId,
+                    balance = listOf(
+                        createBalance(
+                            currency = "PLN",
+                            amount = TEN,
+                        ),
+                    ),
+                ),
+            ),
+        )
+        whenever(groupRepository.findById(groupId)).thenReturn(group)
+        whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
+
+        // when & then
+        shouldThrow<DeleteGroupValidationException> {
+            groupService.removeGroup(groupId, authorId)
+        }
+        verify(groupRepository, times(0)).remove(any())
+        verify(archiveGroupRepository, times(0)).save(any())
     }
 },)

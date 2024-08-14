@@ -7,5 +7,7 @@ object ValidationMessage {
     const val GROUP_CURRENCY_NOT_EMPTY = "Group Currency must not be empty"
     const val GROUP_CURRENCY_NOT_SUPPORTED = "Group Currency is not supported"
     const val GROUP_CURRENCY_PATTERN = "Group Currency must be a 3-letter uppercase code"
-    const val ATTACHMENT_ID_NOT_BLANK = "Attachment ID must not be blank"
+
+    const val GROUP_BALANCE_NOT_ZERO = "Group balance must be zero"
+    const val MISSING_PERMISSION = "Missing permission"
 }

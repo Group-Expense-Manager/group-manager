@@ -2,7 +2,6 @@ package pl.edu.agh.gem.external.persistence
 
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.mongodb.core.MongoTemplate
-import org.springframework.data.mongodb.core.find
 import org.springframework.data.mongodb.core.query.Query.query
 import org.springframework.data.mongodb.core.query.isEqualTo
 import org.springframework.data.mongodb.core.query.where
@@ -37,6 +36,11 @@ class MongoGroupRepository(
     override fun findByUserId(userId: String): List<Group> {
         val query = query(where(GroupEntity::members).elemMatch(where(MemberEntity::userId).isEqualTo(userId)))
         return mongo.find(query, GroupEntity::class.java).map(GroupEntity::toDomain)
+    }
+
+    override fun remove(group: Group) {
+        val query = query(where(GroupEntity::id).isEqualTo(group.id))
+        mongo.remove(query, GroupEntity::class.java)
     }
 
     private fun insertWithUniqueJoinCode(groupEntity: GroupEntity): Group {
