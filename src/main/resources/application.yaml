@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: group-manager
   data:
     mongodb:
       auto-index-creation: true
