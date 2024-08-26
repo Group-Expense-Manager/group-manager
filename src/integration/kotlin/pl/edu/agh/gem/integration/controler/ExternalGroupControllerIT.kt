@@ -3,6 +3,7 @@ package pl.edu.agh.gem.integration.controler
 import io.kotest.datatest.withData
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldExist
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotContainDuplicates
 import io.kotest.matchers.nulls.shouldBeNull
@@ -15,11 +16,13 @@ import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
+import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import pl.edu.agh.gem.assertion.shouldBody
 import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
 import pl.edu.agh.gem.assertion.shouldHaveValidationError
 import pl.edu.agh.gem.assertion.shouldHaveValidatorError
+import pl.edu.agh.gem.error.SimpleErrorsHolder
 import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
 import pl.edu.agh.gem.external.dto.ExternalGroupResponse
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
@@ -35,7 +38,6 @@ import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
-import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_EMPTY
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_SUPPORTED
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTERN
@@ -81,7 +83,7 @@ class ExternalGroupControllerIT(
             nameFn = { it.first },
             Pair(NAME_NOT_BLANK, createGroupCreationRequest(name = "")),
             Pair(NAME_MAX_LENGTH, createGroupCreationRequest(name = "name".repeat(10))),
-            Pair(GROUP_CURRENCY_NOT_BLANK, createGroupCreationRequest(groupCurrencies = "")),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "")),
             Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "someCurrency")),
         ) { (expectedMessage, createGroupRequest) ->
             // given
@@ -393,7 +395,8 @@ class ExternalGroupControllerIT(
             Pair(NAME_NOT_BLANK, createGroupUpdateRequest(name = "")),
             Pair(NAME_MAX_LENGTH, createGroupUpdateRequest(name = "name".repeat(10))),
             Pair(GROUP_CURRENCY_NOT_EMPTY, createGroupUpdateRequest(groupCurrencies = listOf())),
-            Pair(GROUP_CURRENCY_PATTERN, createGroupUpdateRequest(groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "INVALID")))),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupUpdateRequest(groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "AA")))),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupUpdateRequest(groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "")))),
         ) { (expectedMessage, groupUpdateRequest) ->
             // given
             val user = createGemUser()
@@ -410,6 +413,7 @@ class ExternalGroupControllerIT(
 
             // then
             response shouldHaveHttpStatus BAD_REQUEST
+            response shouldHaveValidationError expectedMessage
         }
     }
 

@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size
 import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.model.NewGroup
-import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_BLANK
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTERN
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
@@ -17,7 +16,6 @@ data class GroupCreationRequest(
     @field:Size(max = 20, message = NAME_MAX_LENGTH)
     val name: String,
     val acceptRequired: Boolean,
-    @field:NotBlank(message = GROUP_CURRENCY_NOT_BLANK)
     @field:Pattern(regexp = "[A-Z]{3}", message = GROUP_CURRENCY_PATTERN)
     val groupCurrencies: String,
 )
