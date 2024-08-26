@@ -3,7 +3,6 @@ package pl.edu.agh.gem.integration.controler
 import io.kotest.datatest.withData
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.collections.shouldExist
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.collections.shouldNotContainDuplicates
 import io.kotest.matchers.nulls.shouldBeNull
@@ -16,13 +15,11 @@ import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
-import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec
 import pl.edu.agh.gem.assertion.shouldBody
 import pl.edu.agh.gem.assertion.shouldHaveErrors
 import pl.edu.agh.gem.assertion.shouldHaveHttpStatus
 import pl.edu.agh.gem.assertion.shouldHaveValidationError
 import pl.edu.agh.gem.assertion.shouldHaveValidatorError
-import pl.edu.agh.gem.error.SimpleErrorsHolder
 import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
 import pl.edu.agh.gem.external.dto.ExternalGroupResponse
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
