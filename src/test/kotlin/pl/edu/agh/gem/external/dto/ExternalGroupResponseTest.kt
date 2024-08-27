@@ -12,12 +12,12 @@ class ExternalGroupResponseTest : ShouldSpec({
     should("correctly map Group to ExternalGroupResponse") {
         // given
         val group = createGroup(
-            members = listOf(
+            members = setOf(
                 Member(userId = "user1"),
                 Member(userId = "user2"),
                 Member(userId = "user3"),
             ),
-            groupCurrencies = listOf(
+            currencies = setOf(
                 Currency(code = "USD"),
                 Currency(code = "EUR"),
             ),
@@ -46,8 +46,8 @@ class ExternalGroupResponseTest : ShouldSpec({
     should("return an empty list when Group has no members") {
         // given
         val group = createGroup(
-            members = listOf(),
-            groupCurrencies = listOf(
+            members = setOf(),
+            currencies = setOf(
                 Currency(code = "USD"),
                 Currency(code = "EUR"),
             ),

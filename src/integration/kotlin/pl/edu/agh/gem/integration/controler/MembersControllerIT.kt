@@ -18,7 +18,7 @@ class MembersControllerIT(
 ) : BaseIntegrationSpec({
     should("return group members when group exists") {
         // given
-        val members = listOf(
+        val members = setOf(
             Member(userId = "user1"),
             Member(userId = "user2"),
         )

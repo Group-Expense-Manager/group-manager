@@ -35,7 +35,7 @@ fun Group.toArchiveEntity() = ArchiveGroupEntity(
     ownerId = ownerId,
     members = members.map { it.toArchiveEntity() },
     acceptRequired = acceptRequired,
-    groupCurrencies = groupCurrencies.map { it.toArchiveEntity() },
+    groupCurrencies = currencies.map { it.toArchiveEntity() },
     attachmentId = attachmentId,
 )
 

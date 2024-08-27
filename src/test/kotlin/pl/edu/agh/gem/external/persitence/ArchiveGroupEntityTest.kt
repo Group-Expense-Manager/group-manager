@@ -29,7 +29,7 @@ class ArchiveGroupEntityTest : ShouldSpec({
             it.ownerId shouldBe group.ownerId
             it.members shouldBe group.members.map { member -> ArchiveMemberEntity(member.userId) }
             it.acceptRequired shouldBe group.acceptRequired
-            it.groupCurrencies shouldBe group.groupCurrencies.map { currency -> ArchiveCurrencyEntity(currency.code) }
+            it.groupCurrencies shouldBe group.currencies.map { currency -> ArchiveCurrencyEntity(currency.code) }
             it.attachmentId shouldBe group.attachmentId
         }
     }

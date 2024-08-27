@@ -6,6 +6,8 @@ import pl.edu.agh.gem.external.dto.CurrencyResponse
 import pl.edu.agh.gem.external.dto.GroupAttachmentResponse
 import pl.edu.agh.gem.external.dto.GroupBalanceResponse
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
+import pl.edu.agh.gem.external.dto.GroupUpdateCurrencyDto
+import pl.edu.agh.gem.external.dto.GroupUpdateRequest
 import pl.edu.agh.gem.external.dto.UserBalanceDto
 import pl.edu.agh.gem.external.persistence.ArchiveCurrencyEntity
 import pl.edu.agh.gem.external.persistence.ArchiveGroupEntity
@@ -17,10 +19,10 @@ import pl.edu.agh.gem.internal.model.ArchiveCurrency
 import pl.edu.agh.gem.internal.model.ArchiveGroup
 import pl.edu.agh.gem.internal.model.ArchiveMember
 import pl.edu.agh.gem.internal.model.Balance
-import pl.edu.agh.gem.internal.model.Currencies
 import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.internal.model.Group
 import pl.edu.agh.gem.internal.model.GroupBalance
+import pl.edu.agh.gem.internal.model.GroupUpdate
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.model.NewGroup
 import pl.edu.agh.gem.internal.model.UserBalance
@@ -59,9 +61,9 @@ fun createGroup(
     id: String = "groupId",
     name: String = "groupName",
     ownerId: String = "ownerId",
-    members: List<Member> = listOf(Member("memberId")),
+    members: Set<Member> = setOf(Member("memberId")),
     acceptRequired: Boolean = false,
-    groupCurrencies: Currencies = listOf(Currency("PLN")),
+    currencies: Set<Currency> = setOf(Currency("PLN")),
     attachmentId: String = "attachmentId",
     joinCode: String = "joinCode",
 ) = Group(
@@ -70,7 +72,7 @@ fun createGroup(
     ownerId = ownerId,
     members = members,
     acceptRequired = acceptRequired,
-    groupCurrencies = groupCurrencies,
+    currencies = currencies,
     attachmentId = attachmentId,
     joinCode = joinCode,
 )
@@ -79,25 +81,25 @@ fun createNewGroup(
     id: String = "groupId",
     name: String = "groupName",
     ownerId: String = "ownerId",
-    members: List<Member> = listOf(Member("memberId")),
+    members: Set<Member> = setOf(Member("memberId")),
     acceptRequired: Boolean = false,
-    groupCurrencies: Currencies = listOf(Currency("PLN")),
+    groupCurrencies: Set<Currency> = setOf(Currency("PLN")),
 ) = NewGroup(
     id = id,
     name = name,
     ownerId = ownerId,
     members = members,
     acceptRequired = acceptRequired,
-    groupCurrencies = groupCurrencies,
+    currencies = groupCurrencies,
 )
 
 fun createGroupEntity(
     id: String = "groupId",
     name: String = "groupName",
     ownerId: String = "ownerId",
-    members: List<MemberEntity> = listOf(MemberEntity("memberId")),
+    members: Set<MemberEntity> = setOf(MemberEntity("memberId")),
     acceptRequired: Boolean = false,
-    groupCurrencies: List<CurrencyEntity> = listOf(CurrencyEntity("PLN")),
+    groupCurrencies: Set<CurrencyEntity> = setOf(CurrencyEntity("PLN")),
     attachmentId: String = "attachmentId",
     joinCode: String = "joinCode",
 ) = GroupEntity(
@@ -193,4 +195,32 @@ fun createArchiveGroup(
     acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
+)
+
+fun createGroupUpdate(
+    id: String = "groupId",
+    name: String = "groupName",
+    acceptRequired: Boolean = false,
+    currencies: Set<Currency> = setOf(Currency("PLN")),
+) = GroupUpdate(
+    id = id,
+    name = name,
+    acceptRequired = acceptRequired,
+    currencies = currencies,
+)
+
+fun createGroupUpdateRequest(
+    name: String = "groupName",
+    acceptRequired: Boolean = false,
+    groupCurrencies: List<GroupUpdateCurrencyDto> = listOf(createGroupUpdateCurrencyDto()),
+) = GroupUpdateRequest(
+    name = name,
+    acceptRequired = acceptRequired,
+    groupCurrencies = groupCurrencies,
+)
+
+fun createGroupUpdateCurrencyDto(
+    code: String = "PLN",
+) = GroupUpdateCurrencyDto(
+    code = code,
 )

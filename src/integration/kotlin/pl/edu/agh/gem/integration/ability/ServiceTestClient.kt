@@ -76,4 +76,12 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
             .headers { it.withValidatedUser(user) }
             .exchange()
     }
+
+    fun updateGroup(body: Any?, user: GemUser, groupId: String): ResponseSpec {
+        return webClient.put()
+            .uri(URI("$EXTERNAL/groups/$groupId"))
+            .headers { it.withValidatedUser(user).withAppContentType().withAppAcceptType() }
+            .bodyValue(body)
+            .exchange()
+    }
 }

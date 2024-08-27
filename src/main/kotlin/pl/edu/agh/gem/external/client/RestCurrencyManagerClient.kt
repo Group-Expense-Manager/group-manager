@@ -17,7 +17,7 @@ import pl.edu.agh.gem.headers.HeadersUtils.withAppAcceptType
 import pl.edu.agh.gem.internal.client.CurrencyManagerClient
 import pl.edu.agh.gem.internal.client.CurrencyManagerClientException
 import pl.edu.agh.gem.internal.client.RetryableCurrencyManagerClientException
-import pl.edu.agh.gem.internal.model.Currencies
+import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.paths.Paths.INTERNAL
 
 @Component
@@ -27,7 +27,7 @@ class RestCurrencyManagerClient(
 ) : CurrencyManagerClient {
 
     @Retry(name = "currencyManager")
-    override fun getCurrencies(): Currencies {
+    override fun getCurrencies(): List<Currency> {
         return try {
             restTemplate.exchange(
                 resolveAvailableCurrenciesAddress(),

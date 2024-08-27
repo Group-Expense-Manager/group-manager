@@ -35,7 +35,7 @@ import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.service.MissingGroupException
 import pl.edu.agh.gem.internal.service.UserAlreadyInGroupException
-import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_BLANK
+import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_EMPTY
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_NOT_SUPPORTED
 import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTERN
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
@@ -46,6 +46,8 @@ import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupAttachmentResponse
 import pl.edu.agh.gem.util.createGroupBalanceResponse
 import pl.edu.agh.gem.util.createGroupCreationRequest
+import pl.edu.agh.gem.util.createGroupUpdateCurrencyDto
+import pl.edu.agh.gem.util.createGroupUpdateRequest
 import pl.edu.agh.gem.util.createUserBalanceDto
 import java.math.BigDecimal.TEN
 
@@ -78,7 +80,7 @@ class ExternalGroupControllerIT(
             nameFn = { it.first },
             Pair(NAME_NOT_BLANK, createGroupCreationRequest(name = "")),
             Pair(NAME_MAX_LENGTH, createGroupCreationRequest(name = "name".repeat(10))),
-            Pair(GROUP_CURRENCY_NOT_BLANK, createGroupCreationRequest(groupCurrencies = "")),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "")),
             Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "someCurrency")),
         ) { (expectedMessage, createGroupRequest) ->
             // given
@@ -147,7 +149,7 @@ class ExternalGroupControllerIT(
     should("return UserAlreadyInGroupException when user is already in the group") {
         // given
         val user = createGemUser()
-        val group = createGroup(joinCode = "validJoinCode", members = listOf(Member(user.id)))
+        val group = createGroup(joinCode = "validJoinCode", members = setOf(Member(user.id)))
         groupRepository.save(group)
 
         // when
@@ -183,7 +185,7 @@ class ExternalGroupControllerIT(
                 name = groupsName[index],
                 attachmentId = groupsAttachmentId[index],
                 joinCode = joinCodes[index],
-                members = listOf(Member(userId = user.id), Member(userId = ownersId[index])),
+                members = setOf(Member(userId = user.id), Member(userId = ownersId[index])),
             )
         }
 
@@ -218,7 +220,7 @@ class ExternalGroupControllerIT(
     should("return group when user has access") {
         // given
         val user = createGemUser()
-        val group = createGroup(members = listOf(Member(userId = user.id)))
+        val group = createGroup(members = setOf(Member(userId = user.id)))
         groupRepository.save(group)
 
         // when
@@ -232,7 +234,7 @@ class ExternalGroupControllerIT(
             ownerId shouldBe group.ownerId
             members.map { it.userId } shouldContainExactly group.members.map { it.userId }
             acceptRequired shouldBe group.acceptRequired
-            groupCurrencies.map { it.code } shouldContainExactly group.groupCurrencies.map { it.code }
+            groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
             joinCode shouldBe group.joinCode
             attachmentId shouldBe group.attachmentId
         }
@@ -257,7 +259,7 @@ class ExternalGroupControllerIT(
     should("return UserWithoutGroupAccessException when user does not have access to the group") {
         // given
         val user = createGemUser()
-        val group = createGroup(members = listOf())
+        val group = createGroup(members = setOf())
         groupRepository.save(group)
 
         // when
@@ -274,7 +276,7 @@ class ExternalGroupControllerIT(
     should("delete group") {
         // given
         val user = createGemUser()
-        val group = createGroup(members = listOf(Member(userId = user.id)), ownerId = user.id)
+        val group = createGroup(members = setOf(Member(userId = user.id)), ownerId = user.id)
         groupRepository.save(group)
         val groupBalanceResponse = createGroupBalanceResponse(groupId = group.id)
         stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
@@ -295,7 +297,7 @@ class ExternalGroupControllerIT(
         // given
         val user = createGemUser()
         val authorId = "owner"
-        val group = createGroup(members = listOf(Member(userId = authorId), Member(userId = user.id)), ownerId = authorId)
+        val group = createGroup(members = setOf(Member(userId = authorId), Member(userId = user.id)), ownerId = authorId)
         groupRepository.save(group)
         val groupBalanceResponse = createGroupBalanceResponse(groupId = group.id)
         stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
@@ -314,7 +316,7 @@ class ExternalGroupControllerIT(
     should("block delete group when balance is not zero") {
         // given
         val user = createGemUser()
-        val group = createGroup(members = listOf(Member(userId = user.id)), ownerId = user.id)
+        val group = createGroup(members = setOf(Member(userId = user.id)), ownerId = user.id)
         groupRepository.save(group)
         val groupBalanceResponse = createGroupBalanceResponse(
             groupId = group.id,
@@ -346,10 +348,115 @@ class ExternalGroupControllerIT(
     should("block delete group when group does not exist") {
         // given
         val user = createGemUser()
-        val group = createGroup(members = listOf(Member(userId = user.id)), ownerId = user.id)
+        val group = createGroup(members = setOf(Member(userId = user.id)), ownerId = user.id)
 
         // when
         val response = service.removeGroup(user, group.id)
+
+        // then
+        response shouldHaveHttpStatus NOT_FOUND
+    }
+
+    should("update group successfully") {
+        // given
+        val user = createGemUser()
+        val existingGroup = createGroup(
+            ownerId = user.id,
+            members = setOf(Member(userId = user.id)),
+        )
+        groupRepository.save(existingGroup)
+        val currenciesResponse = createAvailableCurrenciesResponse()
+        stubCurrencyManagerCurrencies(currenciesResponse)
+        val groupUpdateRequest = createGroupUpdateRequest(
+            name = "Updated Group Name",
+            acceptRequired = true,
+            groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "PLN")),
+        )
+
+        // when
+        val response = service.updateGroup(groupUpdateRequest, user, existingGroup.id)
+
+        // then
+        response shouldHaveHttpStatus OK
+        response.shouldBody<ExternalGroupResponse> {
+            groupId shouldBe existingGroup.id
+            name shouldBe groupUpdateRequest.name
+            acceptRequired shouldBe groupUpdateRequest.acceptRequired
+            groupCurrencies.map { it.code } shouldContainExactly groupUpdateRequest.groupCurrencies.map { it.code }
+        }
+    }
+
+    context("return validation exception cause:") {
+        withData(
+            nameFn = { it.first },
+            Pair(NAME_NOT_BLANK, createGroupUpdateRequest(name = "")),
+            Pair(NAME_MAX_LENGTH, createGroupUpdateRequest(name = "name".repeat(10))),
+            Pair(GROUP_CURRENCY_NOT_EMPTY, createGroupUpdateRequest(groupCurrencies = listOf())),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupUpdateRequest(groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "AA")))),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupUpdateRequest(groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "")))),
+        ) { (expectedMessage, groupUpdateRequest) ->
+            // given
+            val user = createGemUser()
+            val existingGroup = createGroup(
+                ownerId = user.id,
+                members = setOf(Member(userId = user.id)),
+            )
+            groupRepository.save(existingGroup)
+            val currenciesResponse = createAvailableCurrenciesResponse()
+            stubCurrencyManagerCurrencies(currenciesResponse)
+
+            // when
+            val response = service.updateGroup(groupUpdateRequest, user, existingGroup.id)
+
+            // then
+            response shouldHaveHttpStatus BAD_REQUEST
+            response shouldHaveValidationError expectedMessage
+        }
+    }
+
+    should("return BAD_REQUEST when user is not the owner") {
+        // given
+        val owner = createGemUser(
+            id = "ownerId",
+        )
+        val otherUser = createGemUser(
+            id = "otherUserId",
+        )
+        val existingGroup = createGroup(
+            ownerId = owner.id,
+            members = setOf(Member(userId = owner.id)),
+        )
+        groupRepository.save(existingGroup)
+        val currenciesResponse = createAvailableCurrenciesResponse()
+        stubCurrencyManagerCurrencies(currenciesResponse)
+
+        val groupUpdateRequest = createGroupUpdateRequest(
+            name = "Unauthorized Update",
+            acceptRequired = true,
+            groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "PLN")),
+        )
+
+        // when
+        val response = service.updateGroup(groupUpdateRequest, otherUser, existingGroup.id)
+
+        // then
+        response shouldHaveHttpStatus BAD_REQUEST
+    }
+
+    should("return NOT_FOUND when group does not exist") {
+        // given
+        val user = createGemUser()
+        val nonExistentGroupId = "nonExistentGroup"
+        val currenciesResponse = createAvailableCurrenciesResponse()
+        stubCurrencyManagerCurrencies(currenciesResponse)
+        val groupUpdateRequest = createGroupUpdateRequest(
+            name = "Non-Existent Group",
+            acceptRequired = true,
+            groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "PLN")),
+        )
+
+        // when
+        val response = service.updateGroup(groupUpdateRequest, user, nonExistentGroupId)
 
         // then
         response shouldHaveHttpStatus NOT_FOUND

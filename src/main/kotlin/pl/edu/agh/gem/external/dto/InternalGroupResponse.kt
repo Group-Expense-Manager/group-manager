@@ -11,7 +11,7 @@ data class InternalGroupResponse(
 fun Group.toInternalGroupResponse() = InternalGroupResponse(
     members = members.map { MemberDTO(it.userId) },
     acceptRequired = acceptRequired,
-    groupCurrencies = groupCurrencies.map { CurrencyDTO(it.code) },
+    groupCurrencies = currencies.map { CurrencyDTO(it.code) },
 )
 
 data class MemberDTO(

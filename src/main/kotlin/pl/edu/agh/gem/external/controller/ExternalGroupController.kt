@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
@@ -16,9 +17,11 @@ import pl.edu.agh.gem.external.dto.ExternalGroupResponse
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
 import pl.edu.agh.gem.external.dto.GroupCreationResponse
+import pl.edu.agh.gem.external.dto.GroupUpdateRequest
 import pl.edu.agh.gem.external.dto.toExternalGroupResponse
 import pl.edu.agh.gem.external.dto.toExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.toGroupCreationResponse
+import pl.edu.agh.gem.external.dto.toGroupUpdate
 import pl.edu.agh.gem.external.dto.toNewGroup
 import pl.edu.agh.gem.internal.service.GroupService
 import pl.edu.agh.gem.media.InternalApiMediaType.APPLICATION_JSON_INTERNAL_VER_1
@@ -79,5 +82,17 @@ class ExternalGroupController(
         @PathVariable groupId: String,
     ) {
         groupService.removeGroup(groupId, userId)
+    }
+
+    @PutMapping("/{groupId}", consumes = [APPLICATION_JSON_INTERNAL_VER_1], produces = [APPLICATION_JSON_INTERNAL_VER_1])
+    @ResponseStatus(OK)
+    fun updateGroup(
+        @GemUserId userId: String,
+        @PathVariable groupId: String,
+        @Valid @RequestBody
+        groupCreationRequest: GroupUpdateRequest,
+    ): ExternalGroupResponse {
+        return groupService.updateGroup(groupCreationRequest.toGroupUpdate(groupId), userId)
+            .toExternalGroupResponse()
     }
 }
