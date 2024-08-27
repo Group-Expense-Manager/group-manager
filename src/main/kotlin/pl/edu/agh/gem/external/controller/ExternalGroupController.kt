@@ -84,7 +84,7 @@ class ExternalGroupController(
         groupService.removeGroup(groupId, userId)
     }
 
-    @PutMapping("/{groupId}", produces = [APPLICATION_JSON_INTERNAL_VER_1])
+    @PutMapping("/{groupId}", consumes = [APPLICATION_JSON_INTERNAL_VER_1], produces = [APPLICATION_JSON_INTERNAL_VER_1])
     @ResponseStatus(OK)
     fun updateGroup(
         @GemUserId userId: String,
