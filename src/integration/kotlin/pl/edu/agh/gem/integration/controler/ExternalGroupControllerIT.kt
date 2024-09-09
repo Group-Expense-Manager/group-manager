@@ -45,6 +45,7 @@ import pl.edu.agh.gem.util.createBalanceDto
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupAttachmentResponse
 import pl.edu.agh.gem.util.createGroupBalanceResponse
+import pl.edu.agh.gem.util.createGroupCreationCurrencyDto
 import pl.edu.agh.gem.util.createGroupCreationRequest
 import pl.edu.agh.gem.util.createGroupUpdateCurrencyDto
 import pl.edu.agh.gem.util.createGroupUpdateRequest
@@ -80,8 +81,9 @@ class ExternalGroupControllerIT(
             nameFn = { it.first },
             Pair(NAME_NOT_BLANK, createGroupCreationRequest(name = "")),
             Pair(NAME_MAX_LENGTH, createGroupCreationRequest(name = "name".repeat(10))),
-            Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "")),
-            Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = "someCurrency")),
+            Pair(GROUP_CURRENCY_NOT_EMPTY, createGroupCreationRequest(groupCurrencies = listOf())),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = listOf(createGroupCreationCurrencyDto(code = "")))),
+            Pair(GROUP_CURRENCY_PATTERN, createGroupCreationRequest(groupCurrencies = listOf(createGroupCreationCurrencyDto(code = "someCurrency")))),
         ) { (expectedMessage, createGroupRequest) ->
             // given
             val user = createGemUser()
@@ -102,7 +104,7 @@ class ExternalGroupControllerIT(
         val user = createGemUser()
         val currenciesResponse = createAvailableCurrenciesResponse()
         stubCurrencyManagerCurrencies(currenciesResponse)
-        val createGroupRequest = createGroupCreationRequest(groupCurrencies = "STH")
+        val createGroupRequest = createGroupCreationRequest(groupCurrencies = listOf(createGroupCreationCurrencyDto(code = "STH")))
 
         // when
         val response = service.createGroup(createGroupRequest, user)
