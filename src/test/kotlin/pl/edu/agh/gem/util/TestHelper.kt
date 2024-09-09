@@ -5,6 +5,7 @@ import pl.edu.agh.gem.external.dto.BalanceDto
 import pl.edu.agh.gem.external.dto.CurrencyResponse
 import pl.edu.agh.gem.external.dto.GroupAttachmentResponse
 import pl.edu.agh.gem.external.dto.GroupBalanceResponse
+import pl.edu.agh.gem.external.dto.GroupCreationCurrencyDto
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
 import pl.edu.agh.gem.external.dto.GroupUpdateCurrencyDto
 import pl.edu.agh.gem.external.dto.GroupUpdateRequest
@@ -31,10 +32,16 @@ import java.math.BigDecimal.ZERO
 
 fun createGroupCreationRequest(
     name: String = "groupName",
-    groupCurrencies: String = "PLN",
+    groupCurrencies: List<GroupCreationCurrencyDto> = listOf(createGroupCreationCurrencyDto()),
 ) = GroupCreationRequest(
     name = name,
     groupCurrencies = groupCurrencies,
+)
+
+fun createGroupCreationCurrencyDto(
+    code: String = "PLN",
+) = GroupCreationCurrencyDto(
+    code = code,
 )
 
 fun createAvailableCurrenciesResponse(
