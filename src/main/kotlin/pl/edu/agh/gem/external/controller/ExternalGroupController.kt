@@ -16,11 +16,9 @@ import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
 import pl.edu.agh.gem.external.dto.ExternalGroupResponse
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
-import pl.edu.agh.gem.external.dto.GroupCreationResponse
 import pl.edu.agh.gem.external.dto.GroupUpdateRequest
 import pl.edu.agh.gem.external.dto.toExternalGroupResponse
 import pl.edu.agh.gem.external.dto.toExternalUserGroupsResponse
-import pl.edu.agh.gem.external.dto.toGroupCreationResponse
 import pl.edu.agh.gem.external.dto.toGroupUpdate
 import pl.edu.agh.gem.external.dto.toNewGroup
 import pl.edu.agh.gem.internal.service.GroupService
@@ -40,10 +38,10 @@ class ExternalGroupController(
         @GemUserId userId: String,
         @Valid @RequestBody
         groupCreationRequest: GroupCreationRequest,
-    ): GroupCreationResponse {
+    ): ExternalGroupResponse {
         return groupService.createGroup(
             groupCreationRequest.toNewGroup(userId),
-        ).toGroupCreationResponse()
+        ).toExternalGroupResponse()
     }
 
     @PostMapping("/join/{joinCode}", consumes = [APPLICATION_JSON_INTERNAL_VER_1], produces = [APPLICATION_JSON_INTERNAL_VER_1])
@@ -51,8 +49,8 @@ class ExternalGroupController(
     fun joinGroup(
         @GemUserId userId: String,
         @PathVariable joinCode: String,
-    ) {
-        groupService.joinGroup(joinCode, userId)
+    ): ExternalGroupResponse {
+        return groupService.joinGroup(joinCode, userId).toExternalGroupResponse()
     }
 
     @GetMapping(produces = [APPLICATION_JSON_INTERNAL_VER_1])
