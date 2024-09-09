@@ -5,7 +5,6 @@ data class NewGroup(
     val name: String,
     val ownerId: String,
     val members: Set<Member>,
-    val acceptRequired: Boolean,
     val currencies: Set<Currency>,
 )
 
@@ -15,7 +14,6 @@ fun NewGroup.toGroup(attachmentId: String, joinCode: String) =
         name = name,
         ownerId = ownerId,
         members = members,
-        acceptRequired = acceptRequired,
         currencies = currencies,
         joinCode = joinCode,
         attachmentId = attachmentId,

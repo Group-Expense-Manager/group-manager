@@ -240,7 +240,6 @@ class GroupServiceTest : ShouldSpec({
         val group = createGroup(
             id = groupId,
             name = "OldName",
-            acceptRequired = false,
             currencies = setOf(Currency("PLN")),
             ownerId = authorId,
             members = setOf(Member(userId = authorId)),
@@ -248,7 +247,6 @@ class GroupServiceTest : ShouldSpec({
         val groupUpdate = createGroupUpdate(
             id = groupId,
             name = "NewName",
-            acceptRequired = true,
             currencies = setOf(Currency("EUR")),
         )
         whenever(groupRepository.findById(groupId)).thenReturn(group)
@@ -263,7 +261,6 @@ class GroupServiceTest : ShouldSpec({
         verify(groupRepository, times(1)).findById(groupId)
         verify(groupRepository, times(1)).save(any())
         result.name shouldBe groupUpdate.name
-        result.acceptRequired shouldBe groupUpdate.acceptRequired
         result.currencies shouldContainExactly groupUpdate.currencies
     }
 

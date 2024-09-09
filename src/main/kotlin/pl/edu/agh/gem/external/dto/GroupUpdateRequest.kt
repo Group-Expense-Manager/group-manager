@@ -16,7 +16,6 @@ data class GroupUpdateRequest(
     @field:NotBlank(message = NAME_NOT_BLANK)
     @field:Size(max = 20, message = NAME_MAX_LENGTH)
     val name: String,
-    val acceptRequired: Boolean,
     @field:NotEmpty(message = GROUP_CURRENCY_NOT_EMPTY)
     @field:Valid
     val groupCurrencies: List<GroupUpdateCurrencyDto>,
@@ -31,6 +30,5 @@ fun GroupUpdateRequest.toGroupUpdate(groupId: String) =
     GroupUpdate(
         id = groupId,
         name = name,
-        acceptRequired = acceptRequired,
         currencies = groupCurrencies.map { Currency(it.code) }.toSet(),
     )

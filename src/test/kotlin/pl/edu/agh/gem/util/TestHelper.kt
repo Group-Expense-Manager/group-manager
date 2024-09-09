@@ -31,11 +31,9 @@ import java.math.BigDecimal.ZERO
 
 fun createGroupCreationRequest(
     name: String = "groupName",
-    acceptRequired: Boolean = false,
     groupCurrencies: String = "PLN",
 ) = GroupCreationRequest(
     name = name,
-    acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
 )
 
@@ -62,7 +60,6 @@ fun createGroup(
     name: String = "groupName",
     ownerId: String = "ownerId",
     members: Set<Member> = setOf(Member("memberId")),
-    acceptRequired: Boolean = false,
     currencies: Set<Currency> = setOf(Currency("PLN")),
     attachmentId: String = "attachmentId",
     joinCode: String = "joinCode",
@@ -71,7 +68,6 @@ fun createGroup(
     name = name,
     ownerId = ownerId,
     members = members,
-    acceptRequired = acceptRequired,
     currencies = currencies,
     attachmentId = attachmentId,
     joinCode = joinCode,
@@ -82,14 +78,12 @@ fun createNewGroup(
     name: String = "groupName",
     ownerId: String = "ownerId",
     members: Set<Member> = setOf(Member("memberId")),
-    acceptRequired: Boolean = false,
     groupCurrencies: Set<Currency> = setOf(Currency("PLN")),
 ) = NewGroup(
     id = id,
     name = name,
     ownerId = ownerId,
     members = members,
-    acceptRequired = acceptRequired,
     currencies = groupCurrencies,
 )
 
@@ -98,7 +92,6 @@ fun createGroupEntity(
     name: String = "groupName",
     ownerId: String = "ownerId",
     members: Set<MemberEntity> = setOf(MemberEntity("memberId")),
-    acceptRequired: Boolean = false,
     groupCurrencies: Set<CurrencyEntity> = setOf(CurrencyEntity("PLN")),
     attachmentId: String = "attachmentId",
     joinCode: String = "joinCode",
@@ -107,7 +100,6 @@ fun createGroupEntity(
     name = name,
     ownerId = ownerId,
     members = members,
-    acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
     joinCode = joinCode,
@@ -166,7 +158,6 @@ fun createArchiveGroupEntity(
     name: String = "groupName",
     ownerId: String = "ownerId",
     members: List<ArchiveMemberEntity> = listOf(ArchiveMemberEntity("memberId")),
-    acceptRequired: Boolean = false,
     groupCurrencies: List<ArchiveCurrencyEntity> = listOf(ArchiveCurrencyEntity("PLN")),
     attachmentId: String = "attachmentId",
 ) = ArchiveGroupEntity(
@@ -174,7 +165,6 @@ fun createArchiveGroupEntity(
     name = name,
     ownerId = ownerId,
     members = members,
-    acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
 )
@@ -184,7 +174,6 @@ fun createArchiveGroup(
     name: String = "groupName",
     ownerId: String = "ownerId",
     members: List<ArchiveMember> = listOf(ArchiveMember("memberId")),
-    acceptRequired: Boolean = false,
     groupCurrencies: List<ArchiveCurrency> = listOf(ArchiveCurrency("PLN")),
     attachmentId: String = "attachmentId",
 ) = ArchiveGroup(
@@ -192,7 +181,6 @@ fun createArchiveGroup(
     name = name,
     ownerId = ownerId,
     members = members,
-    acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
     attachmentId = attachmentId,
 )
@@ -200,22 +188,18 @@ fun createArchiveGroup(
 fun createGroupUpdate(
     id: String = "groupId",
     name: String = "groupName",
-    acceptRequired: Boolean = false,
     currencies: Set<Currency> = setOf(Currency("PLN")),
 ) = GroupUpdate(
     id = id,
     name = name,
-    acceptRequired = acceptRequired,
     currencies = currencies,
 )
 
 fun createGroupUpdateRequest(
     name: String = "groupName",
-    acceptRequired: Boolean = false,
     groupCurrencies: List<GroupUpdateCurrencyDto> = listOf(createGroupUpdateCurrencyDto()),
 ) = GroupUpdateRequest(
     name = name,
-    acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies,
 )
 

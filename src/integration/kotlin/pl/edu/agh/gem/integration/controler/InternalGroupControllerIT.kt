@@ -39,7 +39,6 @@ class InternalGroupControllerIT(
         response.shouldBody<InternalGroupResponse> {
             members.map { it.userId } shouldContainExactly members.map { it.userId }
             groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
-            acceptRequired shouldBe group.acceptRequired
         }
     }
 

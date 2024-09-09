@@ -21,7 +21,6 @@ class ExternalGroupResponseTest : ShouldSpec({
                 Currency(code = "USD"),
                 Currency(code = "EUR"),
             ),
-            acceptRequired = true,
             id = "group1",
             name = "Test Group",
             ownerId = "owner1",
@@ -37,7 +36,6 @@ class ExternalGroupResponseTest : ShouldSpec({
         externalGroupResponse.name.shouldBe("Test Group")
         externalGroupResponse.ownerId.shouldBe("owner1")
         externalGroupResponse.members.map { it.userId } shouldContainExactly listOf("user1", "user2", "user3")
-        externalGroupResponse.acceptRequired.shouldBe(true)
         externalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly listOf("USD", "EUR")
         externalGroupResponse.joinCode.shouldBe("join123")
         externalGroupResponse.attachmentId.shouldBe("attachment456")
@@ -51,7 +49,6 @@ class ExternalGroupResponseTest : ShouldSpec({
                 Currency(code = "USD"),
                 Currency(code = "EUR"),
             ),
-            acceptRequired = false,
             id = "group1",
             name = "Test Group",
             ownerId = "owner1",
@@ -67,7 +64,6 @@ class ExternalGroupResponseTest : ShouldSpec({
         externalGroupResponse.name.shouldBe("Test Group")
         externalGroupResponse.ownerId.shouldBe("owner1")
         externalGroupResponse.members.shouldBe(listOf())
-        externalGroupResponse.acceptRequired.shouldBe(false)
         externalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly listOf("USD", "EUR")
         externalGroupResponse.joinCode.shouldBe("join123")
         externalGroupResponse.attachmentId.shouldBe("attachment456")

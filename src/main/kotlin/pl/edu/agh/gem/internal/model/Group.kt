@@ -5,7 +5,6 @@ data class Group(
     val name: String,
     val ownerId: String,
     val members: Set<Member>,
-    val acceptRequired: Boolean,
     val currencies: Set<Currency>,
     val joinCode: String,
     val attachmentId: String,
