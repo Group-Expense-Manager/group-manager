@@ -16,7 +16,6 @@ data class ArchiveGroupEntity(
     val name: String,
     val ownerId: String,
     val members: List<ArchiveMemberEntity>,
-    val acceptRequired: Boolean,
     val groupCurrencies: List<ArchiveCurrencyEntity>,
     val attachmentId: String,
 )
@@ -34,7 +33,6 @@ fun Group.toArchiveEntity() = ArchiveGroupEntity(
     name = name,
     ownerId = ownerId,
     members = members.map { it.toArchiveEntity() },
-    acceptRequired = acceptRequired,
     groupCurrencies = currencies.map { it.toArchiveEntity() },
     attachmentId = attachmentId,
 )
@@ -52,7 +50,6 @@ fun ArchiveGroup.toEntity() = ArchiveGroupEntity(
     name = name,
     ownerId = ownerId,
     members = members.map { it.toEntity() },
-    acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies.map { it.toEntity() },
     attachmentId = attachmentId,
 )
@@ -70,7 +67,6 @@ fun ArchiveGroupEntity.toDomain() = ArchiveGroup(
     name = name,
     ownerId = ownerId,
     members = members.map { it.toDomain() },
-    acceptRequired = acceptRequired,
     groupCurrencies = groupCurrencies.map { it.toDomain() },
     attachmentId = attachmentId,
 )

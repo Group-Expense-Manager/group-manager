@@ -28,7 +28,6 @@ class ArchiveGroupEntityTest : ShouldSpec({
             it.name shouldBe group.name
             it.ownerId shouldBe group.ownerId
             it.members shouldBe group.members.map { member -> ArchiveMemberEntity(member.userId) }
-            it.acceptRequired shouldBe group.acceptRequired
             it.groupCurrencies shouldBe group.currencies.map { currency -> ArchiveCurrencyEntity(currency.code) }
             it.attachmentId shouldBe group.attachmentId
         }
@@ -47,7 +46,6 @@ class ArchiveGroupEntityTest : ShouldSpec({
             it.name shouldBe archiveGroupEntity.name
             it.ownerId shouldBe archiveGroupEntity.ownerId
             it.members shouldBe archiveGroupEntity.members.map { memberEntity -> ArchiveMember(memberEntity.userId) }
-            it.acceptRequired shouldBe archiveGroupEntity.acceptRequired
             it.groupCurrencies shouldBe archiveGroupEntity.groupCurrencies.map { currencyEntity -> ArchiveCurrency(currencyEntity.code) }
             it.attachmentId shouldBe archiveGroupEntity.attachmentId
         }
@@ -66,7 +64,6 @@ class ArchiveGroupEntityTest : ShouldSpec({
             it.name shouldBe archiveGroup.name
             it.ownerId shouldBe archiveGroup.ownerId
             it.members shouldBe archiveGroup.members.map { member -> ArchiveMemberEntity(member.userId) }
-            it.acceptRequired shouldBe archiveGroup.acceptRequired
             it.groupCurrencies shouldBe archiveGroup.groupCurrencies.map { currency -> ArchiveCurrencyEntity(currency.code) }
             it.attachmentId shouldBe archiveGroup.attachmentId
         }

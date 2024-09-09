@@ -5,7 +5,6 @@ data class ArchiveGroup(
     val name: String,
     val ownerId: String,
     val members: List<ArchiveMember>,
-    val acceptRequired: Boolean,
     val groupCurrencies: List<ArchiveCurrency>,
     val attachmentId: String,
 )

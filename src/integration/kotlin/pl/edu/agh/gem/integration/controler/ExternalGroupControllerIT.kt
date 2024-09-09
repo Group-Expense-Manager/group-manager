@@ -233,7 +233,6 @@ class ExternalGroupControllerIT(
             name shouldBe group.name
             ownerId shouldBe group.ownerId
             members.map { it.userId } shouldContainExactly group.members.map { it.userId }
-            acceptRequired shouldBe group.acceptRequired
             groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
             joinCode shouldBe group.joinCode
             attachmentId shouldBe group.attachmentId
@@ -369,7 +368,6 @@ class ExternalGroupControllerIT(
         stubCurrencyManagerCurrencies(currenciesResponse)
         val groupUpdateRequest = createGroupUpdateRequest(
             name = "Updated Group Name",
-            acceptRequired = true,
             groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "PLN")),
         )
 
@@ -381,7 +379,6 @@ class ExternalGroupControllerIT(
         response.shouldBody<ExternalGroupResponse> {
             groupId shouldBe existingGroup.id
             name shouldBe groupUpdateRequest.name
-            acceptRequired shouldBe groupUpdateRequest.acceptRequired
             groupCurrencies.map { it.code } shouldContainExactly groupUpdateRequest.groupCurrencies.map { it.code }
         }
     }
@@ -432,7 +429,6 @@ class ExternalGroupControllerIT(
 
         val groupUpdateRequest = createGroupUpdateRequest(
             name = "Unauthorized Update",
-            acceptRequired = true,
             groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "PLN")),
         )
 
@@ -451,7 +447,6 @@ class ExternalGroupControllerIT(
         stubCurrencyManagerCurrencies(currenciesResponse)
         val groupUpdateRequest = createGroupUpdateRequest(
             name = "Non-Existent Group",
-            acceptRequired = true,
             groupCurrencies = listOf(createGroupUpdateCurrencyDto(code = "PLN")),
         )
 

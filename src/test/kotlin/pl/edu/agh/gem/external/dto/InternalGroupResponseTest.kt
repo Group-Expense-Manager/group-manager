@@ -24,7 +24,6 @@ class InternalGroupResponseTest : ShouldSpec({
         // then
         internalGroupResponse.members.map { it.id } shouldContainExactly setOf("user1", "user2", "user3")
         internalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
-        internalGroupResponse.acceptRequired.shouldBe(group.acceptRequired)
     }
 
     should("return an empty list when Group has no members") {
@@ -37,6 +36,5 @@ class InternalGroupResponseTest : ShouldSpec({
         // then
         internalGroupResponse.members.shouldBe(listOf())
         internalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
-        internalGroupResponse.acceptRequired.shouldBe(group.acceptRequired)
     }
 },)

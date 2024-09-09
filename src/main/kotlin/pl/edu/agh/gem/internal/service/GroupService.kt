@@ -70,7 +70,6 @@ class GroupService(
         validateGroupUpdate(group, groupUpdate, authorId)
         return groupRepository.save(
             group.copy(
-                acceptRequired = groupUpdate.acceptRequired,
                 currencies = groupUpdate.currencies,
                 name = groupUpdate.name,
             ),
