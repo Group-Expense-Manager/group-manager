@@ -42,6 +42,7 @@ import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
 import pl.edu.agh.gem.util.createAvailableCurrenciesResponse
 import pl.edu.agh.gem.util.createBalanceDto
+import pl.edu.agh.gem.util.createCurrencyResponse
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupAttachmentResponse
 import pl.edu.agh.gem.util.createGroupBalanceResponse
@@ -65,6 +66,26 @@ class ExternalGroupControllerIT(
         stubInitGroupAttachment(attachment, user.id)
         stubCurrencyManagerCurrencies(currenciesResponse)
         val createGroupRequest = createGroupCreationRequest()
+
+        // when
+        val response = service.createGroup(createGroupRequest, user)
+
+        // then
+        response shouldHaveHttpStatus CREATED
+        response.shouldBody<GroupCreationResponse> {
+            groupId.shouldNotBeNull()
+        }
+    }
+
+    should("create group with multiple currencies") {
+        // given
+        val user = createGemUser()
+        val currencies = listOf("PLN", "USD", "EUR")
+        val currenciesResponse = createAvailableCurrenciesResponse(currencies = currencies.map { createCurrencyResponse(it) })
+        val attachment = createGroupAttachmentResponse()
+        stubInitGroupAttachment(attachment, user.id)
+        stubCurrencyManagerCurrencies(currenciesResponse)
+        val createGroupRequest = createGroupCreationRequest(groupCurrencies = currencies.map { createGroupCreationCurrencyDto(it) })
 
         // when
         val response = service.createGroup(createGroupRequest, user)
