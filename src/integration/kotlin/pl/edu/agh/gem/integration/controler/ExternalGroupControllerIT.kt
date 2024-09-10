@@ -240,6 +240,7 @@ class ExternalGroupControllerIT(
         // then
         response shouldHaveHttpStatus OK
         response.shouldBody<ExternalUserGroupsResponse> {
+            groups.map { it.ownerId } shouldContainExactly ownersId
             groups.map { it.groupId } shouldContainExactly groupsId
             groups.map { it.name } shouldContainExactly groupsName
             groups.map { it.attachmentId } shouldContainExactly groupsAttachmentId
