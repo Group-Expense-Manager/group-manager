@@ -23,7 +23,6 @@ import pl.edu.agh.gem.assertion.shouldHaveValidatorError
 import pl.edu.agh.gem.exception.UserWithoutGroupAccessException
 import pl.edu.agh.gem.external.dto.ExternalGroupResponse
 import pl.edu.agh.gem.external.dto.ExternalUserGroupsResponse
-import pl.edu.agh.gem.external.dto.GroupCreationResponse
 import pl.edu.agh.gem.helper.user.createGemUser
 import pl.edu.agh.gem.integration.BaseIntegrationSpec
 import pl.edu.agh.gem.integration.ability.ServiceTestClient
@@ -72,8 +71,14 @@ class ExternalGroupControllerIT(
 
         // then
         response shouldHaveHttpStatus CREATED
-        response.shouldBody<GroupCreationResponse> {
+        response.shouldBody<ExternalGroupResponse> {
             groupId.shouldNotBeNull()
+            name shouldBe createGroupRequest.name
+            ownerId shouldBe user.id
+            members.map { it.userId } shouldContain user.id
+            groupCurrencies.map { it.code } shouldContainExactly currenciesResponse.currencies.map { it.code }
+            joinCode.shouldNotBeNull()
+            attachmentId shouldBe attachment.id
         }
     }
 
@@ -92,8 +97,14 @@ class ExternalGroupControllerIT(
 
         // then
         response shouldHaveHttpStatus CREATED
-        response.shouldBody<GroupCreationResponse> {
+        response.shouldBody<ExternalGroupResponse> {
             groupId.shouldNotBeNull()
+            name shouldBe createGroupRequest.name
+            ownerId shouldBe user.id
+            members.map { it.userId } shouldContain user.id
+            groupCurrencies.map { it.code } shouldContainExactly currencies
+            joinCode.shouldNotBeNull()
+            attachmentId shouldBe attachment.id
         }
     }
 
@@ -146,6 +157,15 @@ class ExternalGroupControllerIT(
 
         // then
         response shouldHaveHttpStatus OK
+        response.shouldBody<ExternalGroupResponse> {
+            groupId shouldBe group.id
+            name shouldBe group.name
+            ownerId shouldBe group.ownerId
+            members.map { it.userId } shouldContainExactly group.members.map { it.userId } + user.id
+            groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
+            joinCode shouldBe group.joinCode
+            attachmentId shouldBe group.attachmentId
+        }
         groupRepository.findByJoinCode(group.joinCode).apply {
             shouldNotBeNull()
             members.map { member -> member.userId }.shouldContain(user.id)
@@ -220,6 +240,7 @@ class ExternalGroupControllerIT(
         // then
         response shouldHaveHttpStatus OK
         response.shouldBody<ExternalUserGroupsResponse> {
+            groups.map { it.ownerId } shouldContainExactly ownersId
             groups.map { it.groupId } shouldContainExactly groupsId
             groups.map { it.name } shouldContainExactly groupsName
             groups.map { it.attachmentId } shouldContainExactly groupsAttachmentId
