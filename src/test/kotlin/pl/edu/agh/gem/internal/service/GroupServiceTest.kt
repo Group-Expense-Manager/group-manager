@@ -247,10 +247,10 @@ class GroupServiceTest : ShouldSpec({
         val groupUpdate = createGroupUpdate(
             id = groupId,
             name = "NewName",
-            currencies = setOf(Currency("EUR")),
+            currencies = setOf(Currency("PLN"), Currency("EUR")),
         )
         whenever(groupRepository.findById(groupId)).thenReturn(group)
-        val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
+        val currencies = setOf("USD", "EUR", "PLN").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
         whenever(groupRepository.save(any())).thenAnswer { it.getArgument<Group>(0) }
 
@@ -271,6 +271,26 @@ class GroupServiceTest : ShouldSpec({
         val group = createGroup(id = groupId)
         val groupUpdate = createGroupUpdate(
             currencies = setOf("INVALID").map { Currency(it) }.toSet(),
+        )
+        whenever(groupRepository.findById(groupId)).thenReturn(group)
+        val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
+        whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
+
+        // when & then
+        shouldThrow<ValidatorsException> {
+            groupService.updateGroup(groupUpdate, authorId)
+        }
+        verify(groupRepository, times(1)).findById(groupId)
+        verify(groupRepository, times(0)).save(any())
+    }
+
+    should("throw ValidatorsException when group update are not backward compatible") {
+        // given
+        val groupId = "groupId"
+        val authorId = "authorId"
+        val group = createGroup(id = groupId, currencies = setOf(Currency("USD"), Currency("EUR")))
+        val groupUpdate = createGroupUpdate(
+            currencies = setOf("EUR").map { Currency(it) }.toSet(),
         )
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
