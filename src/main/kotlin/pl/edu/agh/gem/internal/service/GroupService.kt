@@ -14,6 +14,7 @@ import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.internal.validation.BalanceValidator
 import pl.edu.agh.gem.internal.validation.CurrenciesValidator
+import pl.edu.agh.gem.internal.validation.NewCurrenciesValidator
 import pl.edu.agh.gem.internal.validation.PermissionValidator
 import pl.edu.agh.gem.internal.validation.wrapper.GroupDataWrapper
 import pl.edu.agh.gem.internal.validation.wrapper.GroupUpdateDataWrapper
@@ -33,6 +34,7 @@ class GroupService(
 ) {
 
     private val currenciesValidator = CurrenciesValidator(currencyManagerClient)
+    private val newCurrenciesValidator = NewCurrenciesValidator()
     private val balanceValidator = BalanceValidator(financeAdapterClient)
     private val permissionValidator = PermissionValidator()
 
@@ -78,7 +80,7 @@ class GroupService(
 
     private fun validateGroupCreation(newGroup: NewGroup) {
         val dataWrapper = NewGroupDataWrapper(
-            currencies = newGroup.currencies,
+            newCurrencies = newGroup.currencies,
         )
         validate(dataWrapper, currenciesValidator)
             .takeIf { it.isNotEmpty() }
@@ -103,9 +105,11 @@ class GroupService(
             userId = authorId,
             members = group.members,
             ownerId = group.ownerId,
-            currencies = groupUpdate.currencies,
+            currencies = group.currencies,
+            newCurrencies = groupUpdate.currencies,
         )
         validate(dataWrapper, currenciesValidator)
+            .alsoValidate(dataWrapper, newCurrenciesValidator)
             .alsoValidate(dataWrapper, permissionValidator)
             .takeIf { it.isNotEmpty() }
             ?.also { throw ValidatorsException(it) }
