@@ -16,7 +16,8 @@ class BalanceValidator(
     )
 
     private fun checkBalance(dataWrapper: GroupIdentifierDataWrapper): Boolean {
-        val groupBalance = financeAdapterClient.getGroupBalance(dataWrapper.groupId)
-        return groupBalance.usersBalance.flatMap { userBalance -> userBalance.balance.map { it.amount } }.all { it == ZERO }
+        val balancesList = financeAdapterClient.getGroupBalance(dataWrapper.groupId)
+        return balancesList.flatMap { balances -> balances.users.map { it.value } }
+            .all { it.compareTo(ZERO) == 0 }
     }
 }

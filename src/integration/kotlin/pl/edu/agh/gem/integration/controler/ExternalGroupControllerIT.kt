@@ -40,17 +40,15 @@ import pl.edu.agh.gem.internal.validation.ValidationMessage.GROUP_CURRENCY_PATTE
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_MAX_LENGTH
 import pl.edu.agh.gem.internal.validation.ValidationMessage.NAME_NOT_BLANK
 import pl.edu.agh.gem.util.createAvailableCurrenciesResponse
-import pl.edu.agh.gem.util.createBalanceDto
+import pl.edu.agh.gem.util.createBalancesResponse
 import pl.edu.agh.gem.util.createCurrencyResponse
 import pl.edu.agh.gem.util.createGroup
 import pl.edu.agh.gem.util.createGroupAttachmentResponse
-import pl.edu.agh.gem.util.createGroupBalanceResponse
 import pl.edu.agh.gem.util.createGroupCreationCurrencyDto
 import pl.edu.agh.gem.util.createGroupCreationRequest
 import pl.edu.agh.gem.util.createGroupUpdateCurrencyDto
 import pl.edu.agh.gem.util.createGroupUpdateRequest
-import pl.edu.agh.gem.util.createUserBalanceDto
-import java.math.BigDecimal.TEN
+import pl.edu.agh.gem.util.createZeroBalancesResponse
 
 class ExternalGroupControllerIT(
     private val service: ServiceTestClient,
@@ -321,8 +319,8 @@ class ExternalGroupControllerIT(
         val user = createGemUser()
         val group = createGroup(members = setOf(Member(userId = user.id)), ownerId = user.id)
         groupRepository.save(group)
-        val groupBalanceResponse = createGroupBalanceResponse(groupId = group.id)
-        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
+        val groupBalanceResponse = createZeroBalancesResponse(groupId = group.id)
+        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.groupId)
 
         // when
         val response = service.removeGroup(user, group.id)
@@ -342,8 +340,8 @@ class ExternalGroupControllerIT(
         val authorId = "owner"
         val group = createGroup(members = setOf(Member(userId = authorId), Member(userId = user.id)), ownerId = authorId)
         groupRepository.save(group)
-        val groupBalanceResponse = createGroupBalanceResponse(groupId = group.id)
-        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
+        val groupBalanceResponse = createZeroBalancesResponse(groupId = group.id)
+        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.groupId)
 
         // when
         val response = service.removeGroup(user, group.id)
@@ -361,21 +359,8 @@ class ExternalGroupControllerIT(
         val user = createGemUser()
         val group = createGroup(members = setOf(Member(userId = user.id)), ownerId = user.id)
         groupRepository.save(group)
-        val groupBalanceResponse = createGroupBalanceResponse(
-            groupId = group.id,
-            usersBalance = listOf(
-                createUserBalanceDto(
-                    userId = user.id,
-                    balance = listOf(
-                        createBalanceDto(
-                            currency = "PLN",
-                            amount = TEN,
-                        ),
-                    ),
-                ),
-            ),
-        )
-        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.id)
+        val groupBalanceResponse = createBalancesResponse(groupId = group.id)
+        stubGroupBalance(groupBalanceResponse, groupBalanceResponse.groupId)
 
         // when
         val response = service.removeGroup(user, group.id)

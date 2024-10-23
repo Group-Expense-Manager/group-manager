@@ -11,6 +11,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import pl.edu.agh.gem.helper.user.DummyUser.OTHER_USER_ID
 import pl.edu.agh.gem.helper.user.DummyUser.USER_ID
 import pl.edu.agh.gem.internal.client.AttachmentStoreClient
 import pl.edu.agh.gem.internal.client.CurrencyManagerClient
@@ -23,13 +24,12 @@ import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
 import pl.edu.agh.gem.internal.persistence.GroupRepository
 import pl.edu.agh.gem.util.createBalance
+import pl.edu.agh.gem.util.createBalances
 import pl.edu.agh.gem.util.createGroup
-import pl.edu.agh.gem.util.createGroupBalance
 import pl.edu.agh.gem.util.createGroupUpdate
 import pl.edu.agh.gem.util.createNewGroup
-import pl.edu.agh.gem.util.createUserBalance
+import pl.edu.agh.gem.util.createZeroBalancesList
 import pl.edu.agh.gem.validator.ValidatorsException
-import java.math.BigDecimal.TEN
 
 class GroupServiceTest : ShouldSpec({
 
@@ -174,8 +174,8 @@ class GroupServiceTest : ShouldSpec({
         val authorId = "authorId"
         val group = createGroup(id = groupId, ownerId = authorId, members = setOf(Member(userId = authorId)))
         whenever(groupRepository.findById(groupId)).thenReturn(group)
-        val groupBalanceResponse = createGroupBalance(groupId = group.id)
-        whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
+        val balancesList = createZeroBalancesList()
+        whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(balancesList)
 
         // when
         groupService.removeGroup(groupId, authorId)
@@ -191,7 +191,7 @@ class GroupServiceTest : ShouldSpec({
         val userId = "userId"
         val authorId = "owner"
         val group = createGroup(members = setOf(Member(userId = authorId), Member(userId = userId)), ownerId = authorId)
-        val groupBalanceResponse = createGroupBalance(groupId = group.id)
+        val groupBalanceResponse = createZeroBalancesList()
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
 
@@ -208,17 +208,19 @@ class GroupServiceTest : ShouldSpec({
         val groupId = "groupId"
         val authorId = "owner"
         val group = createGroup(members = setOf(Member(userId = authorId)), ownerId = authorId)
-        val groupBalanceResponse = createGroupBalance(
-            groupId = group.id,
-            usersBalance = listOf(
-                createUserBalance(
-                    userId = authorId,
-                    balance = listOf(
-                        createBalance(
-                            currency = "PLN",
-                            amount = TEN,
-                        ),
-                    ),
+        val groupBalanceResponse = listOf(
+            createBalances(
+                currency = "PLN",
+                users = listOf(
+                    createBalance(USER_ID, "0".toBigDecimal()),
+                    createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+                ),
+            ),
+            createBalances(
+                currency = "EUR",
+                users = listOf(
+                    createBalance(USER_ID, "0".toBigDecimal()),
+                    createBalance(OTHER_USER_ID, "1".toBigDecimal()),
                 ),
             ),
         )
