@@ -9,32 +9,31 @@ import org.springframework.stereotype.Component
 import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestTemplate
-import pl.edu.agh.gem.config.AttachmentStoreProperties
-import pl.edu.agh.gem.external.dto.GroupBalanceResponse
-import pl.edu.agh.gem.external.dto.toDomain
+import pl.edu.agh.gem.config.FinanceAdapterProperties
+import pl.edu.agh.gem.external.dto.BalancesResponse
 import pl.edu.agh.gem.headers.HeadersUtils.withAppAcceptType
 import pl.edu.agh.gem.internal.client.FinanceAdapterClient
 import pl.edu.agh.gem.internal.client.FinanceAdapterClientException
 import pl.edu.agh.gem.internal.client.RetryableFinanceAdapterClientException
-import pl.edu.agh.gem.internal.model.GroupBalance
+import pl.edu.agh.gem.internal.model.Balances
 import pl.edu.agh.gem.paths.Paths.INTERNAL
 
 @Component
 class RestFinanceAdapterClient(
     @Qualifier("FinanceAdapterRestTemplate") val restTemplate: RestTemplate,
-    val attachmentStoreProperties: AttachmentStoreProperties,
+    val financeAdapterProperties: FinanceAdapterProperties,
 ) : FinanceAdapterClient {
 
     private fun resolveGetGroupBalance(groupId: String) =
-        "${attachmentStoreProperties.url}$INTERNAL/balances/groups/$groupId"
+        "${financeAdapterProperties.url}$INTERNAL/balances/groups/$groupId"
 
-    override fun getGroupBalance(groupId: String): GroupBalance {
+    override fun getGroupBalance(groupId: String): List<Balances> {
         return try {
             restTemplate.exchange(
                 resolveGetGroupBalance(groupId),
                 GET,
                 HttpEntity<Any>(HttpHeaders().withAppAcceptType()),
-                GroupBalanceResponse::class.java,
+                BalancesResponse::class.java,
             ).body?.toDomain() ?: throw FinanceAdapterClientException("While trying to retrieve group balance we receive empty body")
         } catch (ex: HttpClientErrorException) {
             logger.warn(ex) { "Client side exception while trying to retrieve group balance" }

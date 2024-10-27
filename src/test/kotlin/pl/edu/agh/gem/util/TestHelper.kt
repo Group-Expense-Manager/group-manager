@@ -1,10 +1,10 @@
 package pl.edu.agh.gem.util
 
 import pl.edu.agh.gem.external.dto.AvailableCurrenciesResponse
-import pl.edu.agh.gem.external.dto.BalanceDto
+import pl.edu.agh.gem.external.dto.BalancesDto
+import pl.edu.agh.gem.external.dto.BalancesResponse
 import pl.edu.agh.gem.external.dto.CurrencyResponse
 import pl.edu.agh.gem.external.dto.GroupAttachmentResponse
-import pl.edu.agh.gem.external.dto.GroupBalanceResponse
 import pl.edu.agh.gem.external.dto.GroupCreationCurrencyDto
 import pl.edu.agh.gem.external.dto.GroupCreationRequest
 import pl.edu.agh.gem.external.dto.GroupUpdateCurrencyDto
@@ -16,19 +16,19 @@ import pl.edu.agh.gem.external.persistence.ArchiveMemberEntity
 import pl.edu.agh.gem.external.persistence.CurrencyEntity
 import pl.edu.agh.gem.external.persistence.GroupEntity
 import pl.edu.agh.gem.external.persistence.MemberEntity
+import pl.edu.agh.gem.helper.user.DummyUser.OTHER_USER_ID
+import pl.edu.agh.gem.helper.user.DummyUser.USER_ID
 import pl.edu.agh.gem.internal.model.ArchiveCurrency
 import pl.edu.agh.gem.internal.model.ArchiveGroup
 import pl.edu.agh.gem.internal.model.ArchiveMember
 import pl.edu.agh.gem.internal.model.Balance
+import pl.edu.agh.gem.internal.model.Balances
 import pl.edu.agh.gem.internal.model.Currency
 import pl.edu.agh.gem.internal.model.Group
-import pl.edu.agh.gem.internal.model.GroupBalance
 import pl.edu.agh.gem.internal.model.GroupUpdate
 import pl.edu.agh.gem.internal.model.Member
 import pl.edu.agh.gem.internal.model.NewGroup
-import pl.edu.agh.gem.internal.model.UserBalance
 import java.math.BigDecimal
-import java.math.BigDecimal.ZERO
 
 fun createGroupCreationRequest(
     name: String = "groupName",
@@ -112,52 +112,92 @@ fun createGroupEntity(
     joinCode = joinCode,
 )
 
-fun createGroupBalanceResponse(
+fun createBalancesResponse(
     groupId: String = "groupId",
-    usersBalance: List<UserBalanceDto> = listOf(createUserBalanceDto()),
-) = GroupBalanceResponse(
-    id = groupId,
-    usersBalance = usersBalance,
+    balances: List<BalancesDto> = listOf(createBalancesDto()),
+) = BalancesResponse(
+    groupId = groupId,
+    balances = balances,
+)
+
+fun createZeroBalancesResponse(
+    groupId: String = "groupId",
+    balances: List<BalancesDto> = listOf(
+        createBalancesDto(
+            currency = "PLN",
+            userBalances = listOf(
+                createUserBalanceDto(userId = USER_ID, "0".toBigDecimal()),
+                createUserBalanceDto(userId = OTHER_USER_ID, "0".toBigDecimal()),
+            ),
+        ),
+        createBalancesDto(
+            currency = "EUR",
+            userBalances = listOf(
+                createUserBalanceDto(userId = USER_ID, "0".toBigDecimal()),
+                createUserBalanceDto(userId = OTHER_USER_ID, "0".toBigDecimal()),
+            ),
+        ),
+    ),
+) = BalancesResponse(
+    groupId = groupId,
+    balances = balances,
+)
+
+fun createBalancesDto(
+    currency: String = "PLN",
+    userBalances: List<UserBalanceDto> = listOf(
+        createUserBalanceDto(userId = USER_ID, "5".toBigDecimal()),
+        createUserBalanceDto(userId = OTHER_USER_ID, "-2".toBigDecimal()),
+    ),
+) = BalancesDto(
+    currency = currency,
+    userBalances = userBalances,
 )
 
 fun createUserBalanceDto(
-    userId: String = "userId",
-    balance: List<BalanceDto> = listOf(createBalanceDto()),
+    userId: String = USER_ID,
+    value: BigDecimal = "1".toBigDecimal(),
 ) = UserBalanceDto(
     userId = userId,
-    balance = balance,
+    value = value,
 )
 
-fun createBalanceDto(
+fun createBalances(
     currency: String = "PLN",
-    amount: BigDecimal = ZERO,
-) = BalanceDto(
+    users: List<Balance> = listOf(
+        createBalance(userId = USER_ID, "5".toBigDecimal()),
+        createBalance(userId = OTHER_USER_ID, "-2".toBigDecimal()),
+    ),
+) = Balances(
     currency = currency,
-    amount = amount,
+    users = users,
 )
 
-fun createGroupBalance(
-    groupId: String = "groupId",
-    usersBalance: List<UserBalance> = listOf(createUserBalance()),
-) = GroupBalance(
-    id = groupId,
-    usersBalance = usersBalance,
-)
-
-fun createUserBalance(
-    userId: String = "userId",
-    balance: List<Balance> = listOf(createBalance()),
-) = UserBalance(
-    userId = userId,
-    balance = balance,
-)
+fun createZeroBalancesList(
+    balancesList: List<Balances> = listOf(
+        createBalances(
+            currency = "PLN",
+            users = listOf(
+                createBalance(USER_ID, "0".toBigDecimal()),
+                createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+            ),
+        ),
+        createBalances(
+            currency = "EUR",
+            users = listOf(
+                createBalance(USER_ID, "0".toBigDecimal()),
+                createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+            ),
+        ),
+    ),
+) = balancesList
 
 fun createBalance(
-    currency: String = "PLN",
-    amount: BigDecimal = ZERO,
+    userId: String = USER_ID,
+    value: BigDecimal = "1".toBigDecimal(),
 ) = Balance(
-    currency = currency,
-    amount = amount,
+    userId = userId,
+    value = value,
 )
 
 fun createArchiveGroupEntity(
