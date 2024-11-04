@@ -22,8 +22,13 @@ class InternalGroupResponseTest : ShouldSpec({
         val internalGroupResponse = group.toInternalGroupResponse()
 
         // then
+        internalGroupResponse.groupId shouldBe group.id
+        internalGroupResponse.name shouldBe group.name
+        internalGroupResponse.ownerId shouldBe group.ownerId
         internalGroupResponse.members.map { it.id } shouldContainExactly setOf("user1", "user2", "user3")
         internalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
+        internalGroupResponse.joinCode shouldBe group.joinCode
+        internalGroupResponse.attachmentId shouldBe group.attachmentId
     }
 
     should("return an empty list when Group has no members") {
@@ -34,7 +39,12 @@ class InternalGroupResponseTest : ShouldSpec({
         val internalGroupResponse = group.toInternalGroupResponse()
 
         // then
+        internalGroupResponse.groupId shouldBe group.id
+        internalGroupResponse.name shouldBe group.name
+        internalGroupResponse.ownerId shouldBe group.ownerId
         internalGroupResponse.members.shouldBe(listOf())
         internalGroupResponse.groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
+        internalGroupResponse.joinCode shouldBe group.joinCode
+        internalGroupResponse.attachmentId shouldBe group.attachmentId
     }
 },)
