@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository
 import pl.edu.agh.gem.internal.model.ArchiveGroup
 import pl.edu.agh.gem.internal.model.Group
 import pl.edu.agh.gem.internal.persistence.ArchiveGroupRepository
+import pl.edu.agh.gem.metrics.MeteredRepository
 
 @Repository
+@MeteredRepository
 class MongoArchiveGroupRepository(
     private val mongo: MongoTemplate,
 ) : ArchiveGroupRepository {

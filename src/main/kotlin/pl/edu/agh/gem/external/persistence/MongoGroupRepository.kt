@@ -9,8 +9,10 @@ import org.springframework.stereotype.Repository
 import pl.edu.agh.gem.internal.generator.CodeGenerator
 import pl.edu.agh.gem.internal.model.Group
 import pl.edu.agh.gem.internal.persistence.GroupRepository
+import pl.edu.agh.gem.metrics.MeteredRepository
 
 @Repository
+@MeteredRepository
 class MongoGroupRepository(
     private val mongo: MongoTemplate,
     private val codeGenerator: CodeGenerator,

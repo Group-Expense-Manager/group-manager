@@ -1,6 +1,6 @@
 package pl.edu.agh.gem.external.client
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -16,9 +16,11 @@ import pl.edu.agh.gem.internal.client.FinanceAdapterClient
 import pl.edu.agh.gem.internal.client.FinanceAdapterClientException
 import pl.edu.agh.gem.internal.client.RetryableFinanceAdapterClientException
 import pl.edu.agh.gem.internal.model.Balances
+import pl.edu.agh.gem.metrics.MeteredClient
 import pl.edu.agh.gem.paths.Paths.INTERNAL
 
 @Component
+@MeteredClient
 class RestFinanceAdapterClient(
     @Qualifier("FinanceAdapterRestTemplate") val restTemplate: RestTemplate,
     val financeAdapterProperties: FinanceAdapterProperties,
