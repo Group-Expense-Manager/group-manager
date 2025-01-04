@@ -20,12 +20,13 @@ data class CurrencyDto(
     val code: String,
 )
 
-fun Group.toExternalGroupResponse() = ExternalGroupResponse(
-    groupId = id,
-    name = name,
-    ownerId = ownerId,
-    members = members.map { MemberDto(it.userId) },
-    groupCurrencies = currencies.map { CurrencyDto(it.code) },
-    joinCode = joinCode,
-    attachmentId = attachmentId,
-)
+fun Group.toExternalGroupResponse() =
+    ExternalGroupResponse(
+        groupId = id,
+        name = name,
+        ownerId = ownerId,
+        members = members.map { MemberDto(it.userId) },
+        groupCurrencies = currencies.map { CurrencyDto(it.code) },
+        joinCode = joinCode,
+        attachmentId = attachmentId,
+    )

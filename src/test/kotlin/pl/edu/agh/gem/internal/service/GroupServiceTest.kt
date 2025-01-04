@@ -39,14 +39,15 @@ class GroupServiceTest : ShouldSpec({
     val archiveGroupRepository = mock<ArchiveGroupRepository>()
     val codeGenerator = mock<CodeGenerator>()
     val financeAdapterClient = mock<FinanceAdapterClient>()
-    val groupService = GroupService(
-        currencyManagerClient = currencyManagerClient,
-        attachmentStoreClient = attachmentStoreClient,
-        groupRepository = groupRepository,
-        archiveGroupRepository = archiveGroupRepository,
-        codeGenerator = codeGenerator,
-        financeAdapterClient = financeAdapterClient,
-    )
+    val groupService =
+        GroupService(
+            currencyManagerClient = currencyManagerClient,
+            attachmentStoreClient = attachmentStoreClient,
+            groupRepository = groupRepository,
+            archiveGroupRepository = archiveGroupRepository,
+            codeGenerator = codeGenerator,
+            financeAdapterClient = financeAdapterClient,
+        )
 
     should("create group successfully") {
         // given
@@ -208,22 +209,25 @@ class GroupServiceTest : ShouldSpec({
         val groupId = "groupId"
         val authorId = "owner"
         val group = createGroup(members = setOf(Member(userId = authorId)), ownerId = authorId)
-        val groupBalanceResponse = listOf(
-            createBalances(
-                currency = "PLN",
-                users = listOf(
-                    createBalance(USER_ID, "0".toBigDecimal()),
-                    createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+        val groupBalanceResponse =
+            listOf(
+                createBalances(
+                    currency = "PLN",
+                    users =
+                        listOf(
+                            createBalance(USER_ID, "0".toBigDecimal()),
+                            createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+                        ),
                 ),
-            ),
-            createBalances(
-                currency = "EUR",
-                users = listOf(
-                    createBalance(USER_ID, "0".toBigDecimal()),
-                    createBalance(OTHER_USER_ID, "1".toBigDecimal()),
+                createBalances(
+                    currency = "EUR",
+                    users =
+                        listOf(
+                            createBalance(USER_ID, "0".toBigDecimal()),
+                            createBalance(OTHER_USER_ID, "1".toBigDecimal()),
+                        ),
                 ),
-            ),
-        )
+            )
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         whenever(financeAdapterClient.getGroupBalance(any())).thenReturn(groupBalanceResponse)
 
@@ -239,18 +243,20 @@ class GroupServiceTest : ShouldSpec({
         // given
         val groupId = "groupId"
         val authorId = "authorId"
-        val group = createGroup(
-            id = groupId,
-            name = "OldName",
-            currencies = setOf(Currency("PLN")),
-            ownerId = authorId,
-            members = setOf(Member(userId = authorId)),
-        )
-        val groupUpdate = createGroupUpdate(
-            id = groupId,
-            name = "NewName",
-            currencies = setOf(Currency("PLN"), Currency("EUR")),
-        )
+        val group =
+            createGroup(
+                id = groupId,
+                name = "OldName",
+                currencies = setOf(Currency("PLN")),
+                ownerId = authorId,
+                members = setOf(Member(userId = authorId)),
+            )
+        val groupUpdate =
+            createGroupUpdate(
+                id = groupId,
+                name = "NewName",
+                currencies = setOf(Currency("PLN"), Currency("EUR")),
+            )
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         val currencies = setOf("USD", "EUR", "PLN").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
@@ -271,9 +277,10 @@ class GroupServiceTest : ShouldSpec({
         val groupId = "groupId"
         val authorId = "authorId"
         val group = createGroup(id = groupId)
-        val groupUpdate = createGroupUpdate(
-            currencies = setOf("INVALID").map { Currency(it) }.toSet(),
-        )
+        val groupUpdate =
+            createGroupUpdate(
+                currencies = setOf("INVALID").map { Currency(it) }.toSet(),
+            )
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
@@ -291,9 +298,10 @@ class GroupServiceTest : ShouldSpec({
         val groupId = "groupId"
         val authorId = "authorId"
         val group = createGroup(id = groupId, currencies = setOf(Currency("USD"), Currency("EUR")))
-        val groupUpdate = createGroupUpdate(
-            currencies = setOf("EUR").map { Currency(it) }.toSet(),
-        )
+        val groupUpdate =
+            createGroupUpdate(
+                currencies = setOf("EUR").map { Currency(it) }.toSet(),
+            )
         whenever(groupRepository.findById(groupId)).thenReturn(group)
         val currencies = setOf("USD", "EUR", "CZK").map { Currency(it) }
         whenever(currencyManagerClient.getCurrencies()).thenReturn(currencies)
@@ -305,4 +313,4 @@ class GroupServiceTest : ShouldSpec({
         verify(groupRepository, times(1)).findById(groupId)
         verify(groupRepository, times(0)).save(any())
     }
-},)
+})

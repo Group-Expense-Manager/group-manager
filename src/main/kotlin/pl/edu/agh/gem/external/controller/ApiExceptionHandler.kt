@@ -34,11 +34,8 @@ import pl.edu.agh.gem.validator.ValidatorsException
 @ControllerAdvice
 @Order(LOWEST_PRECEDENCE)
 class ApiExceptionHandler {
-
     @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValidException(
-        exception: MethodArgumentNotValidException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleMethodArgumentNotValidException(exception: MethodArgumentNotValidException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleNotValidException(exception), BAD_REQUEST)
     }
 
@@ -63,74 +60,62 @@ class ApiExceptionHandler {
     }
 
     @ExceptionHandler(UserWithoutGroupAccessException::class)
-    fun handleUserWithoutGroupAccessException(
-        exception: UserWithoutGroupAccessException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleUserWithoutGroupAccessException(exception: UserWithoutGroupAccessException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), FORBIDDEN)
     }
 
     @ExceptionHandler(CurrencyManagerClientException::class)
-    fun handleCurrencyManagerClientException(
-        exception: CurrencyManagerClientException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleCurrencyManagerClientException(exception: CurrencyManagerClientException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(RetryableCurrencyManagerClientException::class)
-    fun handleRetryableCurrencyManagerClientException(
-        exception: RetryableCurrencyManagerClientException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleRetryableCurrencyManagerClientException(exception: RetryableCurrencyManagerClientException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(AttachmentStoreClientException::class)
-    fun handleAttachmentStoreClientException(
-        exception: AttachmentStoreClientException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleAttachmentStoreClientException(exception: AttachmentStoreClientException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(RetryableAttachmentStoreClientException::class)
-    fun handleRetryableAttachmentStoreClientException(
-        exception: RetryableAttachmentStoreClientException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleRetryableAttachmentStoreClientException(exception: RetryableAttachmentStoreClientException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(FinanceAdapterClientException::class)
-    fun handleFinanceAdapterClientException(
-        exception: AttachmentStoreClientException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleFinanceAdapterClientException(exception: AttachmentStoreClientException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(RetryableFinanceAdapterClientException::class)
-    fun handleRetryableFinanceAdapterClientException(
-        exception: RetryableFinanceAdapterClientException,
-    ): ResponseEntity<SimpleErrorsHolder> {
+    fun handleRetryableFinanceAdapterClientException(exception: RetryableFinanceAdapterClientException): ResponseEntity<SimpleErrorsHolder> {
         return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
     }
 
     private fun handleValidatorException(exception: ValidatorsException): SimpleErrorsHolder {
-        val errors = exception.failedValidations
-            .map { error ->
-                SimpleError()
-                    .withCode("VALIDATOR_ERROR")
-                    .withDetails(error)
-                    .withMessage(error)
-            }
+        val errors =
+            exception.failedValidations
+                .map { error ->
+                    SimpleError()
+                        .withCode("VALIDATOR_ERROR")
+                        .withDetails(error)
+                        .withMessage(error)
+                }
         return SimpleErrorsHolder(errors)
     }
 
     private fun handleNotValidException(exception: MethodArgumentNotValidException): SimpleErrorsHolder {
-        val errors = exception.bindingResult.fieldErrors
-            .map { error ->
-                SimpleError()
-                    .withCode("VALIDATION_ERROR")
-                    .withDetails(error.field)
-                    .withUserMessage(error.defaultMessage)
-                    .withMessage(error.defaultMessage)
-            }
+        val errors =
+            exception.bindingResult.fieldErrors
+                .map { error ->
+                    SimpleError()
+                        .withCode("VALIDATION_ERROR")
+                        .withDetails(error.field)
+                        .withUserMessage(error.defaultMessage)
+                        .withMessage(error.defaultMessage)
+                }
         return SimpleErrorsHolder(errors)
     }
 }

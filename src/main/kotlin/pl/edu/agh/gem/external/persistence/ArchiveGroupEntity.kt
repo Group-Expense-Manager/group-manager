@@ -28,53 +28,62 @@ data class ArchiveCurrencyEntity(
     val code: String,
 )
 
-fun Group.toArchiveEntity() = ArchiveGroupEntity(
-    id = id,
-    name = name,
-    ownerId = ownerId,
-    members = members.map { it.toArchiveEntity() },
-    groupCurrencies = currencies.map { it.toArchiveEntity() },
-    attachmentId = attachmentId,
-)
+fun Group.toArchiveEntity() =
+    ArchiveGroupEntity(
+        id = id,
+        name = name,
+        ownerId = ownerId,
+        members = members.map { it.toArchiveEntity() },
+        groupCurrencies = currencies.map { it.toArchiveEntity() },
+        attachmentId = attachmentId,
+    )
 
-private fun Member.toArchiveEntity() = ArchiveMemberEntity(
-    userId = userId,
-)
+private fun Member.toArchiveEntity() =
+    ArchiveMemberEntity(
+        userId = userId,
+    )
 
-private fun Currency.toArchiveEntity() = ArchiveCurrencyEntity(
-    code = code,
-)
+private fun Currency.toArchiveEntity() =
+    ArchiveCurrencyEntity(
+        code = code,
+    )
 
-fun ArchiveGroup.toEntity() = ArchiveGroupEntity(
-    id = id,
-    name = name,
-    ownerId = ownerId,
-    members = members.map { it.toEntity() },
-    groupCurrencies = groupCurrencies.map { it.toEntity() },
-    attachmentId = attachmentId,
-)
+fun ArchiveGroup.toEntity() =
+    ArchiveGroupEntity(
+        id = id,
+        name = name,
+        ownerId = ownerId,
+        members = members.map { it.toEntity() },
+        groupCurrencies = groupCurrencies.map { it.toEntity() },
+        attachmentId = attachmentId,
+    )
 
-private fun ArchiveMember.toEntity() = ArchiveMemberEntity(
-    userId = userId,
-)
+private fun ArchiveMember.toEntity() =
+    ArchiveMemberEntity(
+        userId = userId,
+    )
 
-private fun ArchiveCurrency.toEntity() = ArchiveCurrencyEntity(
-    code = code,
-)
+private fun ArchiveCurrency.toEntity() =
+    ArchiveCurrencyEntity(
+        code = code,
+    )
 
-fun ArchiveGroupEntity.toDomain() = ArchiveGroup(
-    id = id,
-    name = name,
-    ownerId = ownerId,
-    members = members.map { it.toDomain() },
-    groupCurrencies = groupCurrencies.map { it.toDomain() },
-    attachmentId = attachmentId,
-)
+fun ArchiveGroupEntity.toDomain() =
+    ArchiveGroup(
+        id = id,
+        name = name,
+        ownerId = ownerId,
+        members = members.map { it.toDomain() },
+        groupCurrencies = groupCurrencies.map { it.toDomain() },
+        attachmentId = attachmentId,
+    )
 
-private fun ArchiveMemberEntity.toDomain() = ArchiveMember(
-    userId = userId,
-)
+private fun ArchiveMemberEntity.toDomain() =
+    ArchiveMember(
+        userId = userId,
+    )
 
-private fun ArchiveCurrencyEntity.toDomain() = ArchiveCurrency(
-    code = code,
-)
+private fun ArchiveCurrencyEntity.toDomain() =
+    ArchiveCurrency(
+        code = code,
+    )

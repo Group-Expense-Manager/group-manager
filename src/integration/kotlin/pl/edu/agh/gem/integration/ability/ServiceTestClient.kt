@@ -16,11 +16,15 @@ import java.net.URI
 @Component
 @Lazy
 class ServiceTestClient(applicationContext: WebApplicationContext) {
-    private val webClient = bindToApplicationContext(applicationContext)
-        .configureClient()
-        .build()
+    private val webClient =
+        bindToApplicationContext(applicationContext)
+            .configureClient()
+            .build()
 
-    fun createGroup(body: Any?, user: GemUser): ResponseSpec {
+    fun createGroup(
+        body: Any,
+        user: GemUser,
+    ): ResponseSpec {
         return webClient.post()
             .uri(URI("$EXTERNAL/groups"))
             .headers { it.withValidatedUser(user).withAppContentType().withAppAcceptType() }
@@ -28,7 +32,10 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
             .exchange()
     }
 
-    fun joinGroup(joinCode: String, user: GemUser): ResponseSpec {
+    fun joinGroup(
+        joinCode: String,
+        user: GemUser,
+    ): ResponseSpec {
         return webClient.post()
             .uri(URI("$EXTERNAL/groups/join/$joinCode"))
             .headers { it.withValidatedUser(user).withAppContentType().withAppAcceptType() }
@@ -56,7 +63,10 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
             .exchange()
     }
 
-    fun getGroup(user: GemUser, groupId: String): ResponseSpec {
+    fun getGroup(
+        user: GemUser,
+        groupId: String,
+    ): ResponseSpec {
         return webClient.get()
             .uri(URI("$EXTERNAL/groups/$groupId"))
             .headers { it.withAppAcceptType().withValidatedUser(user) }
@@ -70,14 +80,21 @@ class ServiceTestClient(applicationContext: WebApplicationContext) {
             .exchange()
     }
 
-    fun removeGroup(user: GemUser, groupId: String): ResponseSpec {
+    fun removeGroup(
+        user: GemUser,
+        groupId: String,
+    ): ResponseSpec {
         return webClient.delete()
             .uri(URI("$EXTERNAL/groups/$groupId"))
             .headers { it.withValidatedUser(user) }
             .exchange()
     }
 
-    fun updateGroup(body: Any?, user: GemUser, groupId: String): ResponseSpec {
+    fun updateGroup(
+        body: Any,
+        user: GemUser,
+        groupId: String,
+    ): ResponseSpec {
         return webClient.put()
             .uri(URI("$EXTERNAL/groups/$groupId"))
             .headers { it.withValidatedUser(user).withAppContentType().withAppAcceptType() }

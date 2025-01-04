@@ -38,29 +38,25 @@ fun createGroupCreationRequest(
     groupCurrencies = groupCurrencies,
 )
 
-fun createGroupCreationCurrencyDto(
-    code: String = "PLN",
-) = GroupCreationCurrencyDto(
-    code = code,
-)
+fun createGroupCreationCurrencyDto(code: String = "PLN") =
+    GroupCreationCurrencyDto(
+        code = code,
+    )
 
-fun createAvailableCurrenciesResponse(
-    currencies: List<CurrencyResponse> = listOf(createCurrencyResponse()),
-) = AvailableCurrenciesResponse(
-    currencies = currencies,
-)
+fun createAvailableCurrenciesResponse(currencies: List<CurrencyResponse> = listOf(createCurrencyResponse())) =
+    AvailableCurrenciesResponse(
+        currencies = currencies,
+    )
 
-fun createGroupAttachmentResponse(
-    attachmentId: String = "attachmentId",
-) = GroupAttachmentResponse(
-    id = attachmentId,
-)
+fun createGroupAttachmentResponse(attachmentId: String = "attachmentId") =
+    GroupAttachmentResponse(
+        id = attachmentId,
+    )
 
-fun createCurrencyResponse(
-    code: String = "PLN",
-) = CurrencyResponse(
-    code = code,
-)
+fun createCurrencyResponse(code: String = "PLN") =
+    CurrencyResponse(
+        code = code,
+    )
 
 fun createGroup(
     id: String = "groupId",
@@ -122,22 +118,25 @@ fun createBalancesResponse(
 
 fun createZeroBalancesResponse(
     groupId: String = "groupId",
-    balances: List<BalancesDto> = listOf(
-        createBalancesDto(
-            currency = "PLN",
-            userBalances = listOf(
-                createUserBalanceDto(userId = USER_ID, "0".toBigDecimal()),
-                createUserBalanceDto(userId = OTHER_USER_ID, "0".toBigDecimal()),
+    balances: List<BalancesDto> =
+        listOf(
+            createBalancesDto(
+                currency = "PLN",
+                userBalances =
+                    listOf(
+                        createUserBalanceDto(userId = USER_ID, "0".toBigDecimal()),
+                        createUserBalanceDto(userId = OTHER_USER_ID, "0".toBigDecimal()),
+                    ),
+            ),
+            createBalancesDto(
+                currency = "EUR",
+                userBalances =
+                    listOf(
+                        createUserBalanceDto(userId = USER_ID, "0".toBigDecimal()),
+                        createUserBalanceDto(userId = OTHER_USER_ID, "0".toBigDecimal()),
+                    ),
             ),
         ),
-        createBalancesDto(
-            currency = "EUR",
-            userBalances = listOf(
-                createUserBalanceDto(userId = USER_ID, "0".toBigDecimal()),
-                createUserBalanceDto(userId = OTHER_USER_ID, "0".toBigDecimal()),
-            ),
-        ),
-    ),
 ) = BalancesResponse(
     groupId = groupId,
     balances = balances,
@@ -145,10 +144,11 @@ fun createZeroBalancesResponse(
 
 fun createBalancesDto(
     currency: String = "PLN",
-    userBalances: List<UserBalanceDto> = listOf(
-        createUserBalanceDto(userId = USER_ID, "5".toBigDecimal()),
-        createUserBalanceDto(userId = OTHER_USER_ID, "-2".toBigDecimal()),
-    ),
+    userBalances: List<UserBalanceDto> =
+        listOf(
+            createUserBalanceDto(userId = USER_ID, "5".toBigDecimal()),
+            createUserBalanceDto(userId = OTHER_USER_ID, "-2".toBigDecimal()),
+        ),
 ) = BalancesDto(
     currency = currency,
     userBalances = userBalances,
@@ -164,32 +164,36 @@ fun createUserBalanceDto(
 
 fun createBalances(
     currency: String = "PLN",
-    users: List<Balance> = listOf(
-        createBalance(userId = USER_ID, "5".toBigDecimal()),
-        createBalance(userId = OTHER_USER_ID, "-2".toBigDecimal()),
-    ),
+    users: List<Balance> =
+        listOf(
+            createBalance(userId = USER_ID, "5".toBigDecimal()),
+            createBalance(userId = OTHER_USER_ID, "-2".toBigDecimal()),
+        ),
 ) = Balances(
     currency = currency,
     users = users,
 )
 
 fun createZeroBalancesList(
-    balancesList: List<Balances> = listOf(
-        createBalances(
-            currency = "PLN",
-            users = listOf(
-                createBalance(USER_ID, "0".toBigDecimal()),
-                createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+    balancesList: List<Balances> =
+        listOf(
+            createBalances(
+                currency = "PLN",
+                users =
+                    listOf(
+                        createBalance(USER_ID, "0".toBigDecimal()),
+                        createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+                    ),
+            ),
+            createBalances(
+                currency = "EUR",
+                users =
+                    listOf(
+                        createBalance(USER_ID, "0".toBigDecimal()),
+                        createBalance(OTHER_USER_ID, "0".toBigDecimal()),
+                    ),
             ),
         ),
-        createBalances(
-            currency = "EUR",
-            users = listOf(
-                createBalance(USER_ID, "0".toBigDecimal()),
-                createBalance(OTHER_USER_ID, "0".toBigDecimal()),
-            ),
-        ),
-    ),
 ) = balancesList
 
 fun createBalance(
@@ -250,8 +254,7 @@ fun createGroupUpdateRequest(
     groupCurrencies = groupCurrencies,
 )
 
-fun createGroupUpdateCurrencyDto(
-    code: String = "PLN",
-) = GroupUpdateCurrencyDto(
-    code = code,
-)
+fun createGroupUpdateCurrencyDto(code: String = "PLN") =
+    GroupUpdateCurrencyDto(
+        code = code,
+    )

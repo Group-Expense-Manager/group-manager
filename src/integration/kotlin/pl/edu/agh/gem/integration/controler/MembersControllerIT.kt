@@ -16,33 +16,34 @@ class MembersControllerIT(
     private val service: ServiceTestClient,
     private val groupRepository: GroupRepository,
 ) : BaseIntegrationSpec({
-    should("return group members when group exists") {
-        // given
-        val members = setOf(
-            Member(userId = "user1"),
-            Member(userId = "user2"),
-        )
-        val group = createGroup(members = members)
-        groupRepository.save(group)
+        should("return group members when group exists") {
+            // given
+            val members =
+                setOf(
+                    Member(userId = "user1"),
+                    Member(userId = "user2"),
+                )
+            val group = createGroup(members = members)
+            groupRepository.save(group)
 
-        // when
-        val result = service.getMembers(group.id)
+            // when
+            val result = service.getMembers(group.id)
 
-        // then
-        result shouldHaveHttpStatus OK
-        result.shouldBody<GroupMembersResponse> {
-            this.members.map { it.id } shouldContainExactly members.map { it.userId }
+            // then
+            result shouldHaveHttpStatus OK
+            result.shouldBody<GroupMembersResponse> {
+                this.members.map { it.id } shouldContainExactly members.map { it.userId }
+            }
         }
-    }
 
-    should("return 404 when group does not exist") {
-        // given
-        val groupId = "nonExistentGroupId"
+        should("return 404 when group does not exist") {
+            // given
+            val groupId = "nonExistentGroupId"
 
-        // when
-        val result = service.getMembers(groupId)
+            // when
+            val result = service.getMembers(groupId)
 
-        // then
-        result shouldHaveHttpStatus NOT_FOUND
-    }
-},)
+            // then
+            result shouldHaveHttpStatus NOT_FOUND
+        }
+    })

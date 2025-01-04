@@ -16,4 +16,4 @@ class GroupAttachmentResponseTest : ShouldSpec({
         // then
         groupAttachment.id shouldBe groupAttachmentResponse.id
     }
-},)
+})

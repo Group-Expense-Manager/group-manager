@@ -25,9 +25,7 @@ class RestFinanceAdapterClient(
     @Qualifier("FinanceAdapterRestTemplate") val restTemplate: RestTemplate,
     val financeAdapterProperties: FinanceAdapterProperties,
 ) : FinanceAdapterClient {
-
-    private fun resolveGetGroupBalance(groupId: String) =
-        "${financeAdapterProperties.url}$INTERNAL/balances/groups/$groupId"
+    private fun resolveGetGroupBalance(groupId: String) = "${financeAdapterProperties.url}$INTERNAL/balances/groups/$groupId"
 
     override fun getGroupBalance(groupId: String): List<Balances> {
         return try {

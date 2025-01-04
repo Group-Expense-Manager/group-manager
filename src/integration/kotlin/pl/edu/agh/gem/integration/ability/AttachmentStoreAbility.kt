@@ -10,10 +10,13 @@ import pl.edu.agh.gem.headers.HeadersTestUtils.withAppContentType
 import pl.edu.agh.gem.integration.environment.ProjectConfig.wiremock
 import pl.edu.agh.gem.paths.Paths.INTERNAL
 
-private fun getGroupInitAttachmentPattern(userId: String) =
-    "$INTERNAL/groups/.*/users/$userId/generate"
+private fun getGroupInitAttachmentPattern(userId: String) = "$INTERNAL/groups/.*/users/$userId/generate"
 
-fun stubInitGroupAttachment(body: Any?, userId: String, statusCode: HttpStatusCode = OK) {
+fun stubInitGroupAttachment(
+    body: Any?,
+    userId: String,
+    statusCode: HttpStatusCode = OK,
+) {
     wiremock.stubFor(
         post(urlPathMatching(getGroupInitAttachmentPattern(userId)))
             .willReturn(

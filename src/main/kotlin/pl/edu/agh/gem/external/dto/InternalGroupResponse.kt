@@ -12,15 +12,16 @@ data class InternalGroupResponse(
     val attachmentId: String,
 )
 
-fun Group.toInternalGroupResponse() = InternalGroupResponse(
-    groupId = id,
-    name = name,
-    ownerId = ownerId,
-    members = members.map { MemberDTO(it.userId) },
-    groupCurrencies = currencies.map { CurrencyDTO(it.code) },
-    joinCode = joinCode,
-    attachmentId = attachmentId,
-)
+fun Group.toInternalGroupResponse() =
+    InternalGroupResponse(
+        groupId = id,
+        name = name,
+        ownerId = ownerId,
+        members = members.map { MemberDTO(it.userId) },
+        groupCurrencies = currencies.map { CurrencyDTO(it.code) },
+        joinCode = joinCode,
+        attachmentId = attachmentId,
+    )
 
 data class MemberDTO(
     val id: String,

@@ -48,4 +48,4 @@ class BalanceResponseTest : ShouldSpec({
         // then
         balancesList shouldBe balancesResponse.balances.map { currencyBalances -> currencyBalances.toDomain() }
     }
-},)
+})

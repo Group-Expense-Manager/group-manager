@@ -10,8 +10,7 @@ data class CurrencyResponse(
     val code: String,
 )
 
-fun AvailableCurrenciesResponse.toDomain() =
-    currencies.map { it.toDomain() }
+fun AvailableCurrenciesResponse.toDomain() = currencies.map { it.toDomain() }
 
 fun CurrencyResponse.toDomain() =
     Currency(

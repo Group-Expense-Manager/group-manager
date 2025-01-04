@@ -1,7 +1,7 @@
 package pl.edu.agh.gem.external.client
 
-import io.github.resilience4j.retry.annotation.Retry
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.resilience4j.retry.annotation.Retry
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -27,9 +27,11 @@ class RestAttachmentStoreClient(
     @Qualifier("AttachmentStoreRestTemplate") val restTemplate: RestTemplate,
     val attachmentStoreProperties: AttachmentStoreProperties,
 ) : AttachmentStoreClient {
-
     @Retry(name = "attachmentStore")
-    override fun getGroupInitAttachment(groupId: String, userId: String): GroupAttachment {
+    override fun getGroupInitAttachment(
+        groupId: String,
+        userId: String,
+    ): GroupAttachment {
         return try {
             restTemplate.exchange(
                 resolveInitGroupAttachment(groupId, userId),
@@ -49,8 +51,10 @@ class RestAttachmentStoreClient(
         }
     }
 
-    private fun resolveInitGroupAttachment(groupId: String, userId: String) =
-        "${attachmentStoreProperties.url}$INTERNAL/groups/$groupId/users/$userId/generate"
+    private fun resolveInitGroupAttachment(
+        groupId: String,
+        userId: String,
+    ) = "${attachmentStoreProperties.url}$INTERNAL/groups/$groupId/users/$userId/generate"
 
     companion object {
         private val logger = KotlinLogging.logger {}

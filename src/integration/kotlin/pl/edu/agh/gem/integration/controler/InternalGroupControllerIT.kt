@@ -22,85 +22,87 @@ class InternalGroupControllerIT(
     private val service: ServiceTestClient,
     private val groupRepository: GroupRepository,
 ) : BaseIntegrationSpec({
-    should("get group successfully") {
-        // given
-        val members = setOf(
-            Member(userId = "user1"),
-            Member(userId = "user2"),
-        )
-        val group = createGroup(members = members)
-        groupRepository.save(group)
+        should("get group successfully") {
+            // given
+            val members =
+                setOf(
+                    Member(userId = "user1"),
+                    Member(userId = "user2"),
+                )
+            val group = createGroup(members = members)
+            groupRepository.save(group)
 
-        // when
-        val response = service.getInternalGroup(group.id)
+            // when
+            val response = service.getInternalGroup(group.id)
 
-        // then
-        response shouldHaveHttpStatus OK
-        response.shouldBody<InternalGroupResponse> {
-            members.map { it.userId } shouldContainExactly members.map { it.userId }
-            groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
-        }
-    }
-
-    should("return NOT_FOUND when group does not exist") {
-        // given
-        val groupId = "nonexistentGroupId"
-
-        // when
-        val response = service.getInternalGroup(groupId)
-
-        // then
-        response shouldHaveHttpStatus NOT_FOUND
-        response shouldHaveErrors {
-            errors shouldHaveSize 1
-            errors.first().code shouldBe MissingGroupException::class.simpleName
-        }
-    }
-
-    should("return groups for the user") {
-        // given
-        val userId = "userId"
-
-        val groupsId = listOf("group1", "group2", "group3")
-        val ownersId = listOf("owner1", "owner2", "owner3")
-        val groupsName = listOf("Group 1", "Group 2", "Group 3")
-        val groupsAttachmentId = listOf("attachment1", "attachment2", "attachment3")
-        val joinCodes = listOf("joinCode1", "joinCode2", "joinCode3")
-
-        val groupList = groupsId.mapIndexed { index, groupId ->
-            createGroup(
-                id = groupId,
-                ownerId = ownersId[index],
-                name = groupsName[index],
-                attachmentId = groupsAttachmentId[index],
-                joinCode = joinCodes[index],
-                members = setOf(Member(userId = userId), Member(userId = ownersId[index])),
-            )
+            // then
+            response shouldHaveHttpStatus OK
+            response.shouldBody<InternalGroupResponse> {
+                members.map { it.userId } shouldContainExactly members.map { it.userId }
+                groupCurrencies.map { it.code } shouldContainExactly group.currencies.map { it.code }
+            }
         }
 
-        groupList.forEach(groupRepository::save)
+        should("return NOT_FOUND when group does not exist") {
+            // given
+            val groupId = "nonexistentGroupId"
 
-        // when
-        val response = service.getInternalUserGroups(userId)
+            // when
+            val response = service.getInternalGroup(groupId)
 
-        // then
-        response shouldHaveHttpStatus OK
-        response.shouldBody<InternalUserGroupsResponse> {
-            groups.map { it.groupId } shouldContainExactly groupsId
+            // then
+            response shouldHaveHttpStatus NOT_FOUND
+            response shouldHaveErrors {
+                errors shouldHaveSize 1
+                errors.first().code shouldBe MissingGroupException::class.simpleName
+            }
         }
-    }
 
-    should("return empty list when user does not have any groups") {
-        // given
-        val userId = "userId"
+        should("return groups for the user") {
+            // given
+            val userId = "userId"
 
-        // when
-        val response = service.getInternalUserGroups(userId)
+            val groupsId = listOf("group1", "group2", "group3")
+            val ownersId = listOf("owner1", "owner2", "owner3")
+            val groupsName = listOf("Group 1", "Group 2", "Group 3")
+            val groupsAttachmentId = listOf("attachment1", "attachment2", "attachment3")
+            val joinCodes = listOf("joinCode1", "joinCode2", "joinCode3")
 
-        // then
-        response shouldHaveHttpStatus OK
-        response.shouldBody<InternalUserGroupsResponse> {
-            groups.shouldBeEmpty()
+            val groupList =
+                groupsId.mapIndexed { index, groupId ->
+                    createGroup(
+                        id = groupId,
+                        ownerId = ownersId[index],
+                        name = groupsName[index],
+                        attachmentId = groupsAttachmentId[index],
+                        joinCode = joinCodes[index],
+                        members = setOf(Member(userId = userId), Member(userId = ownersId[index])),
+                    )
+                }
+
+            groupList.forEach(groupRepository::save)
+
+            // when
+            val response = service.getInternalUserGroups(userId)
+
+            // then
+            response shouldHaveHttpStatus OK
+            response.shouldBody<InternalUserGroupsResponse> {
+                groups.map { it.groupId } shouldContainExactly groupsId
+            }
         }
-    }
-},)
+
+        should("return empty list when user does not have any groups") {
+            // given
+            val userId = "userId"
+
+            // when
+            val response = service.getInternalUserGroups(userId)
+
+            // then
+            response shouldHaveHttpStatus OK
+            response.shouldBody<InternalUserGroupsResponse> {
+                groups.shouldBeEmpty()
+            }
+        }
+    })

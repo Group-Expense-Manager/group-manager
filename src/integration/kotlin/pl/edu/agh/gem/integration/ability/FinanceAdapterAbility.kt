@@ -10,10 +10,13 @@ import pl.edu.agh.gem.headers.HeadersTestUtils.withAppContentType
 import pl.edu.agh.gem.integration.environment.ProjectConfig.wiremock
 import pl.edu.agh.gem.paths.Paths.INTERNAL
 
-private fun getGroupBalanceUrl(groupId: String) =
-    "$INTERNAL/balances/groups/$groupId"
+private fun getGroupBalanceUrl(groupId: String) = "$INTERNAL/balances/groups/$groupId"
 
-fun stubGroupBalance(body: Any?, groupId: String, statusCode: HttpStatusCode = OK) {
+fun stubGroupBalance(
+    body: Any?,
+    groupId: String,
+    statusCode: HttpStatusCode = OK,
+) {
     wiremock.stubFor(
         get(urlPathMatching(getGroupBalanceUrl(groupId)))
             .willReturn(

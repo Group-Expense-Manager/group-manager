@@ -13,6 +13,7 @@ data class ExternalUserGroupsDto(
     val attachmentId: String,
 )
 
-fun List<Group>.toExternalUserGroupsResponse() = ExternalUserGroupsResponse(
-    groups = map { ExternalUserGroupsDto(it.id, it.ownerId, it.name, it.attachmentId) },
-)
+fun List<Group>.toExternalUserGroupsResponse() =
+    ExternalUserGroupsResponse(
+        groups = map { ExternalUserGroupsDto(it.id, it.ownerId, it.name, it.attachmentId) },
+    )

@@ -7,11 +7,11 @@ import pl.edu.agh.gem.validator.BaseValidator
 import pl.edu.agh.gem.validator.Check
 
 class PermissionValidator : BaseValidator<MembersDataWrapper>() {
-
-    override val checks: List<Check<MembersDataWrapper>> = listOf(
-        Check(MISSING_PERMISSION) { checkPermission(it) },
-        Check(USER_NOT_FOUND) { checkIfUserIsMember(it) },
-    )
+    override val checks: List<Check<MembersDataWrapper>> =
+        listOf(
+            Check(MISSING_PERMISSION) { checkPermission(it) },
+            Check(USER_NOT_FOUND) { checkIfUserIsMember(it) },
+        )
 
     private fun checkPermission(dataWrapper: MembersDataWrapper): Boolean {
         return dataWrapper.ownerId == dataWrapper.userId

@@ -68,4 +68,4 @@ class ArchiveGroupEntityTest : ShouldSpec({
             it.attachmentId shouldBe archiveGroup.attachmentId
         }
     }
-},)
+})

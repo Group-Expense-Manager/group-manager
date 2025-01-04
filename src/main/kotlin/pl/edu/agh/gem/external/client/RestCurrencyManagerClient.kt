@@ -1,7 +1,7 @@
 package pl.edu.agh.gem.external.client
 
-import io.github.resilience4j.retry.annotation.Retry
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.resilience4j.retry.annotation.Retry
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -27,7 +27,6 @@ class RestCurrencyManagerClient(
     @Qualifier("CurrencyManagerRestTemplate") val restTemplate: RestTemplate,
     val currencyManagerProperties: CurrencyManagerProperties,
 ) : CurrencyManagerClient {
-
     @Retry(name = "currencyManager")
     override fun getCurrencies(): List<Currency> {
         return try {
@@ -49,8 +48,7 @@ class RestCurrencyManagerClient(
         }
     }
 
-    private fun resolveAvailableCurrenciesAddress() =
-        "${currencyManagerProperties.url}$INTERNAL/currencies"
+    private fun resolveAvailableCurrenciesAddress() = "${currencyManagerProperties.url}$INTERNAL/currencies"
 
     companion object {
         private val logger = KotlinLogging.logger {}

@@ -12,39 +12,39 @@ import pl.edu.agh.gem.util.createGroup
 class ArchiveGroupRepositoryIT(
     private val archiveGroupRepository: ArchiveGroupRepository,
 ) : BaseIntegrationSpec({
-    should("save archive group correctly") {
-        // given
-        val group = createGroup()
+        should("save archive group correctly") {
+            // given
+            val group = createGroup()
 
-        // when
-        archiveGroupRepository.save(group)
+            // when
+            archiveGroupRepository.save(group)
 
-        // then
-        val expectedArchivedGroup = group.toArchiveEntity().toDomain()
-        val foundGroup = archiveGroupRepository.findById(group.id)
-        foundGroup.shouldNotBeNull()
-        foundGroup.shouldBe(expectedArchivedGroup)
-    }
+            // then
+            val expectedArchivedGroup = group.toArchiveEntity().toDomain()
+            val foundGroup = archiveGroupRepository.findById(group.id)
+            foundGroup.shouldNotBeNull()
+            foundGroup.shouldBe(expectedArchivedGroup)
+        }
 
-    should("find archive group by id") {
-        // given
-        val group = createGroup()
-        archiveGroupRepository.save(group)
+        should("find archive group by id") {
+            // given
+            val group = createGroup()
+            archiveGroupRepository.save(group)
 
-        // when
-        val foundGroup = archiveGroupRepository.findById(group.id)
+            // when
+            val foundGroup = archiveGroupRepository.findById(group.id)
 
-        // then
-        val expectedArchivedGroup = group.toArchiveEntity().toDomain()
-        foundGroup.shouldNotBeNull()
-        foundGroup.shouldBe(expectedArchivedGroup)
-    }
+            // then
+            val expectedArchivedGroup = group.toArchiveEntity().toDomain()
+            foundGroup.shouldNotBeNull()
+            foundGroup.shouldBe(expectedArchivedGroup)
+        }
 
-    should("return null if archive group with id does not exist") {
-        // when
-        val foundGroup = archiveGroupRepository.findById("nonExistentGroupId")
+        should("return null if archive group with id does not exist") {
+            // when
+            val foundGroup = archiveGroupRepository.findById("nonExistentGroupId")
 
-        // then
-        foundGroup.shouldBeNull()
-    }
-},)
+            // then
+            foundGroup.shouldBeNull()
+        }
+    })
