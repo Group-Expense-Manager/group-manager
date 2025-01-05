@@ -17,7 +17,6 @@ import pl.edu.agh.gem.paths.Paths.INTERNAL
 class MembersController(
     private val groupService: GroupService,
 ) {
-
     @GetMapping("/{groupId}", produces = [APPLICATION_JSON_INTERNAL_VER_1])
     @ResponseStatus(OK)
     fun getMembers(

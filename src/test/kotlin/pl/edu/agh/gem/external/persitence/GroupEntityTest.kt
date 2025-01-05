@@ -50,4 +50,4 @@ class GroupEntityTest : ShouldSpec({
             it.attachmentId shouldBe groupEntity.attachmentId
         }
     }
-},)
+})

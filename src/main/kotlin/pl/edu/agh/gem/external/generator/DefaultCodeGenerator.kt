@@ -20,7 +20,10 @@ class DefaultCodeGenerator(
             DIGITS.takeIf { this.allowDigit } +
             SPECIAL_CHARACTERS.takeIf { this.allowSpecialCharacter }
 
-    private fun generateCode(allowedCharacters: String, length: Long): String {
+    private fun generateCode(
+        allowedCharacters: String,
+        length: Long,
+    ): String {
         return (1..length).map {
             allowedCharacters.random()
         }.joinToString("")

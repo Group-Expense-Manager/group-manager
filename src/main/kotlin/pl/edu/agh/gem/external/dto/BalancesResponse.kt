@@ -15,18 +15,20 @@ data class BalancesDto(
     val currency: String,
     val userBalances: List<UserBalanceDto>,
 ) {
-    fun toDomain() = Balances(
-        currency = currency,
-        users = userBalances.map { it.toDomain() },
-    )
+    fun toDomain() =
+        Balances(
+            currency = currency,
+            users = userBalances.map { it.toDomain() },
+        )
 }
 
 data class UserBalanceDto(
     val userId: String,
     val value: BigDecimal,
 ) {
-    fun toDomain() = Balance(
-        userId = userId,
-        value = value,
-    )
+    fun toDomain() =
+        Balance(
+            userId = userId,
+            value = value,
+        )
 }

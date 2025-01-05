@@ -9,10 +9,10 @@ import pl.edu.agh.gem.validator.Check
 class CurrenciesValidator(
     private val currencyManagerClient: CurrencyManagerClient,
 ) : BaseValidator<CurrenciesDataWrapper>() {
-
-    override val checks: List<Check<CurrenciesDataWrapper>> = listOf(
-        Check(GROUP_CURRENCY_NOT_SUPPORTED) { this.validateCurrency(it) },
-    )
+    override val checks: List<Check<CurrenciesDataWrapper>> =
+        listOf(
+            Check(GROUP_CURRENCY_NOT_SUPPORTED) { this.validateCurrency(it) },
+        )
 
     private fun validateCurrency(dataWrapper: CurrenciesDataWrapper): Boolean {
         val availableCurrencies = currencyManagerClient.getCurrencies().toSet()

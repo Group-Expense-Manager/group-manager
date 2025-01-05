@@ -10,6 +10,7 @@ data class InternalUserGroupsDto(
     val groupId: String,
 )
 
-fun List<Group>.toInternalUserGroupsResponse() = InternalUserGroupsResponse(
-    groups = map { InternalUserGroupsDto(it.id) },
-)
+fun List<Group>.toInternalUserGroupsResponse() =
+    InternalUserGroupsResponse(
+        groups = map { InternalUserGroupsDto(it.id) },
+    )

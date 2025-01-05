@@ -10,13 +10,15 @@ class GroupMembersResponseTest : ShouldSpec({
 
     should("correctly map Group to GroupMembersResponse") {
         // given
-        val group = createGroup(
-            members = setOf(
-                Member(userId = "user1"),
-                Member(userId = "user2"),
-                Member(userId = "user3"),
-            ),
-        )
+        val group =
+            createGroup(
+                members =
+                    setOf(
+                        Member(userId = "user1"),
+                        Member(userId = "user2"),
+                        Member(userId = "user3"),
+                    ),
+            )
 
         // when
         val groupMembersResponse = group.createGroupMembersResponse()
@@ -37,4 +39,4 @@ class GroupMembersResponseTest : ShouldSpec({
         // then
         groupMembersResponse.members.shouldBe(listOf())
     }
-},)
+})

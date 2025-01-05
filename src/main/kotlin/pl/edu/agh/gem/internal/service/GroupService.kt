@@ -32,7 +32,6 @@ class GroupService(
     private val archiveGroupRepository: ArchiveGroupRepository,
     private val codeGenerator: CodeGenerator,
 ) {
-
     private val currenciesValidator = CurrenciesValidator(currencyManagerClient)
     private val newCurrenciesValidator = NewCurrenciesValidator()
     private val balanceValidator = BalanceValidator(financeAdapterClient)
@@ -46,7 +45,10 @@ class GroupService(
         return groupRepository.insertWithUniqueJoinCode(group)
     }
 
-    fun joinGroup(joinCode: String, userId: String): Group {
+    fun joinGroup(
+        joinCode: String,
+        userId: String,
+    ): Group {
         val group = groupRepository.findByJoinCode(joinCode) ?: throw MissingGroupException(joinCode)
         group.members.find { it.userId == userId }?.also { throw UserAlreadyInGroupException(group.id, userId) }
         return groupRepository.save(group.withMember(userId))
@@ -60,14 +62,20 @@ class GroupService(
         return groupRepository.findByUserId(userId)
     }
 
-    fun removeGroup(groupId: String, authorId: String) {
+    fun removeGroup(
+        groupId: String,
+        authorId: String,
+    ) {
         val group = getGroup(groupId)
         validateGroupRemove(group, authorId)
         groupRepository.remove(group)
         archiveGroupRepository.save(group)
     }
 
-    fun updateGroup(groupUpdate: GroupUpdate, authorId: String): Group {
+    fun updateGroup(
+        groupUpdate: GroupUpdate,
+        authorId: String,
+    ): Group {
         val group = getGroup(groupUpdate.id)
         validateGroupUpdate(group, groupUpdate, authorId)
         return groupRepository.save(
@@ -79,35 +87,45 @@ class GroupService(
     }
 
     private fun validateGroupCreation(newGroup: NewGroup) {
-        val dataWrapper = NewGroupDataWrapper(
-            newCurrencies = newGroup.currencies,
-        )
+        val dataWrapper =
+            NewGroupDataWrapper(
+                newCurrencies = newGroup.currencies,
+            )
         validate(dataWrapper, currenciesValidator)
             .takeIf { it.isNotEmpty() }
             ?.also { throw ValidatorsException(it) }
     }
 
-    private fun validateGroupRemove(group: Group, authorId: String) {
-        val dataWrapper = GroupDataWrapper(
-            groupId = group.id,
-            ownerId = group.ownerId,
-            userId = authorId,
-            members = group.members,
-        )
+    private fun validateGroupRemove(
+        group: Group,
+        authorId: String,
+    ) {
+        val dataWrapper =
+            GroupDataWrapper(
+                groupId = group.id,
+                ownerId = group.ownerId,
+                userId = authorId,
+                members = group.members,
+            )
         validate(dataWrapper, permissionValidator)
             .alsoValidate(dataWrapper, balanceValidator)
             .takeIf { it.isNotEmpty() }
             ?.also { throw DeleteGroupValidationException(it) }
     }
 
-    private fun validateGroupUpdate(group: Group, groupUpdate: GroupUpdate, authorId: String) {
-        val dataWrapper = GroupUpdateDataWrapper(
-            userId = authorId,
-            members = group.members,
-            ownerId = group.ownerId,
-            currencies = group.currencies,
-            newCurrencies = groupUpdate.currencies,
-        )
+    private fun validateGroupUpdate(
+        group: Group,
+        groupUpdate: GroupUpdate,
+        authorId: String,
+    ) {
+        val dataWrapper =
+            GroupUpdateDataWrapper(
+                userId = authorId,
+                members = group.members,
+                ownerId = group.ownerId,
+                currencies = group.currencies,
+                newCurrencies = groupUpdate.currencies,
+            )
         validate(dataWrapper, currenciesValidator)
             .alsoValidate(dataWrapper, newCurrenciesValidator)
             .alsoValidate(dataWrapper, permissionValidator)

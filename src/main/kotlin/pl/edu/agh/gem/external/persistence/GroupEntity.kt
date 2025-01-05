@@ -28,38 +28,44 @@ data class CurrencyEntity(
     val code: String,
 )
 
-fun Group.toEntity() = GroupEntity(
-    id = id,
-    name = name,
-    ownerId = ownerId,
-    members = members.map { it.toEntity() }.toSet(),
-    groupCurrencies = currencies.map { it.toEntity() }.toSet(),
-    joinCode = joinCode,
-    attachmentId = attachmentId,
-)
+fun Group.toEntity() =
+    GroupEntity(
+        id = id,
+        name = name,
+        ownerId = ownerId,
+        members = members.map { it.toEntity() }.toSet(),
+        groupCurrencies = currencies.map { it.toEntity() }.toSet(),
+        joinCode = joinCode,
+        attachmentId = attachmentId,
+    )
 
-private fun Member.toEntity() = MemberEntity(
-    userId = userId,
-)
+private fun Member.toEntity() =
+    MemberEntity(
+        userId = userId,
+    )
 
-private fun Currency.toEntity() = CurrencyEntity(
-    code = code,
-)
+private fun Currency.toEntity() =
+    CurrencyEntity(
+        code = code,
+    )
 
-fun GroupEntity.toDomain() = Group(
-    id = id,
-    name = name,
-    ownerId = ownerId,
-    members = members.map { it.toDomain() }.toSet(),
-    currencies = groupCurrencies.map { it.toDomain() }.toSet(),
-    joinCode = joinCode,
-    attachmentId = attachmentId,
-)
+fun GroupEntity.toDomain() =
+    Group(
+        id = id,
+        name = name,
+        ownerId = ownerId,
+        members = members.map { it.toDomain() }.toSet(),
+        currencies = groupCurrencies.map { it.toDomain() }.toSet(),
+        joinCode = joinCode,
+        attachmentId = attachmentId,
+    )
 
-private fun MemberEntity.toDomain() = Member(
-    userId = userId,
-)
+private fun MemberEntity.toDomain() =
+    Member(
+        userId = userId,
+    )
 
-private fun CurrencyEntity.toDomain() = Currency(
-    code = code,
-)
+private fun CurrencyEntity.toDomain() =
+    Currency(
+        code = code,
+    )

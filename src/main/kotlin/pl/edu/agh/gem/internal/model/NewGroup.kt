@@ -8,13 +8,15 @@ data class NewGroup(
     val currencies: Set<Currency>,
 )
 
-fun NewGroup.toGroup(attachmentId: String, joinCode: String) =
-    Group(
-        id = id,
-        name = name,
-        ownerId = ownerId,
-        members = members,
-        currencies = currencies,
-        joinCode = joinCode,
-        attachmentId = attachmentId,
-    )
+fun NewGroup.toGroup(
+    attachmentId: String,
+    joinCode: String,
+) = Group(
+    id = id,
+    name = name,
+    ownerId = ownerId,
+    members = members,
+    currencies = currencies,
+    joinCode = joinCode,
+    attachmentId = attachmentId,
+)

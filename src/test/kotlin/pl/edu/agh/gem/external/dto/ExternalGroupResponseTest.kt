@@ -11,22 +11,25 @@ class ExternalGroupResponseTest : ShouldSpec({
 
     should("correctly map Group to ExternalGroupResponse") {
         // given
-        val group = createGroup(
-            members = setOf(
-                Member(userId = "user1"),
-                Member(userId = "user2"),
-                Member(userId = "user3"),
-            ),
-            currencies = setOf(
-                Currency(code = "USD"),
-                Currency(code = "EUR"),
-            ),
-            id = "group1",
-            name = "Test Group",
-            ownerId = "owner1",
-            joinCode = "join123",
-            attachmentId = "attachment456",
-        )
+        val group =
+            createGroup(
+                members =
+                    setOf(
+                        Member(userId = "user1"),
+                        Member(userId = "user2"),
+                        Member(userId = "user3"),
+                    ),
+                currencies =
+                    setOf(
+                        Currency(code = "USD"),
+                        Currency(code = "EUR"),
+                    ),
+                id = "group1",
+                name = "Test Group",
+                ownerId = "owner1",
+                joinCode = "join123",
+                attachmentId = "attachment456",
+            )
 
         // when
         val externalGroupResponse = group.toExternalGroupResponse()
@@ -43,18 +46,20 @@ class ExternalGroupResponseTest : ShouldSpec({
 
     should("return an empty list when Group has no members") {
         // given
-        val group = createGroup(
-            members = setOf(),
-            currencies = setOf(
-                Currency(code = "USD"),
-                Currency(code = "EUR"),
-            ),
-            id = "group1",
-            name = "Test Group",
-            ownerId = "owner1",
-            joinCode = "join123",
-            attachmentId = "attachment456",
-        )
+        val group =
+            createGroup(
+                members = setOf(),
+                currencies =
+                    setOf(
+                        Currency(code = "USD"),
+                        Currency(code = "EUR"),
+                    ),
+                id = "group1",
+                name = "Test Group",
+                ownerId = "owner1",
+                joinCode = "join123",
+                attachmentId = "attachment456",
+            )
 
         // when
         val externalGroupResponse = group.toExternalGroupResponse()
@@ -68,4 +73,4 @@ class ExternalGroupResponseTest : ShouldSpec({
         externalGroupResponse.joinCode.shouldBe("join123")
         externalGroupResponse.attachmentId.shouldBe("attachment456")
     }
-},)
+})

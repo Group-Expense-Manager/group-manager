@@ -10,6 +10,7 @@ data class GroupMemberResponse(
     val id: String,
 )
 
-fun Group.createGroupMembersResponse() = GroupMembersResponse(
-    members = members.map { GroupMemberResponse(it.userId) },
-)
+fun Group.createGroupMembersResponse() =
+    GroupMembersResponse(
+        members = members.map { GroupMemberResponse(it.userId) },
+    )

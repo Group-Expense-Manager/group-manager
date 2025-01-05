@@ -12,12 +12,13 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
     should("correctly map Group to ExternalUserGroupsResponse when user in one group") {
         // given
         val userId = "userId"
-        val groups = listOf(
-            createGroup(
-                ownerId = userId,
-                members = setOf(Member(userId = userId)),
-            ),
-        )
+        val groups =
+            listOf(
+                createGroup(
+                    ownerId = userId,
+                    members = setOf(Member(userId = userId)),
+                ),
+            )
 
         // when
         val externalUserGroupsResponse = groups.toExternalUserGroupsResponse()
@@ -37,15 +38,16 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
         val groupsId = listOf("group1", "group2", "group3")
         val groupsName = listOf("Group 1", "Group 2", "Group 3")
         val groupsAttachmentId = listOf("attachment1", "attachment2", "attachment3")
-        val groups = groupsId.mapIndexed { index, groupId ->
-            createGroup(
-                id = groupId,
-                ownerId = userId,
-                name = groupsName[index],
-                attachmentId = groupsAttachmentId[index],
-                members = setOf(Member(userId = userId)),
-            )
-        }
+        val groups =
+            groupsId.mapIndexed { index, groupId ->
+                createGroup(
+                    id = groupId,
+                    ownerId = userId,
+                    name = groupsName[index],
+                    attachmentId = groupsAttachmentId[index],
+                    members = setOf(Member(userId = userId)),
+                )
+            }
         // when
         val externalUserGroupsResponse = groups.toExternalUserGroupsResponse()
 
@@ -68,4 +70,4 @@ class ExternalUserGroupsResponseTest : ShouldSpec({
         // then
         externalUserGroupsResponse.groups shouldBe listOf()
     }
-},)
+})

@@ -10,10 +10,10 @@ import java.math.BigDecimal.ZERO
 class BalanceValidator(
     private val financeAdapterClient: FinanceAdapterClient,
 ) : BaseValidator<GroupIdentifierDataWrapper>() {
-
-    override val checks: List<Check<GroupIdentifierDataWrapper>> = listOf(
-        Check(GROUP_BALANCE_NOT_ZERO) { checkBalance(it) },
-    )
+    override val checks: List<Check<GroupIdentifierDataWrapper>> =
+        listOf(
+            Check(GROUP_BALANCE_NOT_ZERO) { checkBalance(it) },
+        )
 
     private fun checkBalance(dataWrapper: GroupIdentifierDataWrapper): Boolean {
         val balancesList = financeAdapterClient.getGroupBalance(dataWrapper.groupId)

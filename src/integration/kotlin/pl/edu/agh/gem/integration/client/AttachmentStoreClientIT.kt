@@ -14,43 +14,43 @@ import pl.edu.agh.gem.util.createGroupAttachmentResponse
 class AttachmentStoreClientIT(
     private val attachmentStoreClient: AttachmentStoreClient,
 ) : BaseIntegrationSpec({
-    should("get group init attachment") {
-        // given
-        val attachment = createGroupAttachmentResponse()
-        val userId = "userId"
-        val groupId = "groupId"
-        stubInitGroupAttachment(attachment, userId)
+        should("get group init attachment") {
+            // given
+            val attachment = createGroupAttachmentResponse()
+            val userId = "userId"
+            val groupId = "groupId"
+            stubInitGroupAttachment(attachment, userId)
 
-        // when
-        val result = attachmentStoreClient.getGroupInitAttachment(groupId, userId)
+            // when
+            val result = attachmentStoreClient.getGroupInitAttachment(groupId, userId)
 
-        // then
-        result.id shouldBe attachment.id
-    }
-
-    should("throw AttachmentStoreClientException when we send bad request") {
-        // given
-        val attachment = createGroupAttachmentResponse()
-        val userId = "userId"
-        val groupId = "groupId"
-        stubInitGroupAttachment(attachment, userId, NOT_ACCEPTABLE)
-
-        // when & then
-        shouldThrow<AttachmentStoreClientException> {
-            attachmentStoreClient.getGroupInitAttachment(groupId, userId)
+            // then
+            result.id shouldBe attachment.id
         }
-    }
 
-    should("throw RetryableAttachmentStoreClientException when client has internal error") {
-        // given
-        val attachment = createGroupAttachmentResponse()
-        val userId = "userId"
-        val groupId = "groupId"
-        stubInitGroupAttachment(attachment, userId, INTERNAL_SERVER_ERROR)
+        should("throw AttachmentStoreClientException when we send bad request") {
+            // given
+            val attachment = createGroupAttachmentResponse()
+            val userId = "userId"
+            val groupId = "groupId"
+            stubInitGroupAttachment(attachment, userId, NOT_ACCEPTABLE)
 
-        // when & then
-        shouldThrow<RetryableAttachmentStoreClientException> {
-            attachmentStoreClient.getGroupInitAttachment(groupId, userId)
+            // when & then
+            shouldThrow<AttachmentStoreClientException> {
+                attachmentStoreClient.getGroupInitAttachment(groupId, userId)
+            }
         }
-    }
-},)
+
+        should("throw RetryableAttachmentStoreClientException when client has internal error") {
+            // given
+            val attachment = createGroupAttachmentResponse()
+            val userId = "userId"
+            val groupId = "groupId"
+            stubInitGroupAttachment(attachment, userId, INTERNAL_SERVER_ERROR)
+
+            // when & then
+            shouldThrow<RetryableAttachmentStoreClientException> {
+                attachmentStoreClient.getGroupInitAttachment(groupId, userId)
+            }
+        }
+    })

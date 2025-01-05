@@ -14,37 +14,37 @@ import pl.edu.agh.gem.util.createBalancesResponse
 class FinanceAdapterClientIT(
     private val financeAdapterClient: FinanceAdapterClient,
 ) : BaseIntegrationSpec({
-    should("get group balance") {
-        // given
-        val response = createBalancesResponse()
-        stubGroupBalance(response, response.groupId)
+        should("get group balance") {
+            // given
+            val response = createBalancesResponse()
+            stubGroupBalance(response, response.groupId)
 
-        // when
-        val result = financeAdapterClient.getGroupBalance(response.groupId)
+            // when
+            val result = financeAdapterClient.getGroupBalance(response.groupId)
 
-        // then
-        result shouldBe response.toDomain()
-    }
-
-    should("throw FinanceAdapterClientException when we send bad request") {
-        // given
-        val response = createBalancesResponse()
-        stubGroupBalance(response, response.groupId, NOT_ACCEPTABLE)
-
-        // when & then
-        shouldThrow<FinanceAdapterClientException> {
-            financeAdapterClient.getGroupBalance(response.groupId)
+            // then
+            result shouldBe response.toDomain()
         }
-    }
 
-    should("throw RetryableFinanceAdapterClientException when client has internal error") {
-        // given
-        val response = createBalancesResponse()
-        stubGroupBalance(response, response.groupId, INTERNAL_SERVER_ERROR)
+        should("throw FinanceAdapterClientException when we send bad request") {
+            // given
+            val response = createBalancesResponse()
+            stubGroupBalance(response, response.groupId, NOT_ACCEPTABLE)
 
-        // when & then
-        shouldThrow<RetryableFinanceAdapterClientException> {
-            financeAdapterClient.getGroupBalance(response.groupId)
+            // when & then
+            shouldThrow<FinanceAdapterClientException> {
+                financeAdapterClient.getGroupBalance(response.groupId)
+            }
         }
-    }
-},)
+
+        should("throw RetryableFinanceAdapterClientException when client has internal error") {
+            // given
+            val response = createBalancesResponse()
+            stubGroupBalance(response, response.groupId, INTERNAL_SERVER_ERROR)
+
+            // when & then
+            shouldThrow<RetryableFinanceAdapterClientException> {
+                financeAdapterClient.getGroupBalance(response.groupId)
+            }
+        }
+    })
