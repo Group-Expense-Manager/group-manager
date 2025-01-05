@@ -112,12 +112,6 @@ kotlin {
     }
 }
 
-ktlint {
-    reporters {
-        reporter(ReporterType.PLAIN)
-    }
-}
-
 sourceSets {
     create("integration") {
         compileClasspath += project.sourceSets["main"].output + project.sourceSets["test"].output
