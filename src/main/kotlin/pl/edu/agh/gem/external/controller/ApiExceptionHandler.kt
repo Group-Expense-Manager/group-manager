@@ -66,7 +66,7 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(CurrencyManagerClientException::class)
     fun handleCurrencyManagerClientException(exception: CurrencyManagerClientException): ResponseEntity<SimpleErrorsHolder> {
-        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+        return ResponseEntity(handleError(exception), BAD_REQUEST)
     }
 
     @ExceptionHandler(RetryableCurrencyManagerClientException::class)
@@ -76,7 +76,7 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(AttachmentStoreClientException::class)
     fun handleAttachmentStoreClientException(exception: AttachmentStoreClientException): ResponseEntity<SimpleErrorsHolder> {
-        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+        return ResponseEntity(handleError(exception), BAD_REQUEST)
     }
 
     @ExceptionHandler(RetryableAttachmentStoreClientException::class)
@@ -86,7 +86,7 @@ class ApiExceptionHandler {
 
     @ExceptionHandler(FinanceAdapterClientException::class)
     fun handleFinanceAdapterClientException(exception: AttachmentStoreClientException): ResponseEntity<SimpleErrorsHolder> {
-        return ResponseEntity(handleError(exception), INTERNAL_SERVER_ERROR)
+        return ResponseEntity(handleError(exception), BAD_REQUEST)
     }
 
     @ExceptionHandler(RetryableFinanceAdapterClientException::class)

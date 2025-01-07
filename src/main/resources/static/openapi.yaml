@@ -1,0 +1,621 @@
+openapi: 3.0.1
+info:
+  title: Group Manager API
+  version: v1
+  description: API for managing groups.
+
+paths:
+  /internal/groups/users/{userId}:
+    get:
+      summary: "GET internal/groups/users/{userId}"
+      operationId: "getGroups"
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        "200":
+          $ref: '#/components/responses/InternalUserGroupsResponse'
+
+  /internal/groups/{groupId}:
+    get:
+      summary: "GET internal/groups/{groupId}"
+      operationId: "getGroup"
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      responses:
+        "200":
+          $ref: '#/components/responses/InternalGroupResponse'
+        "404":
+          $ref: '#/components/responses/MissingGroupException'
+  /external/groups:
+    get:
+      summary: "GET external/groups"
+      operationId: "getGroups"
+      responses:
+        "200":
+          $ref: '#/components/responses/ExternalUserGroupsResponse'
+    post:
+      summary: "POST external/groups"
+      operationId: "createGroup"
+      requestBody:
+        $ref: '#/components/requestBodies/GroupCreationRequest'
+      responses:
+        "201":
+          $ref: '#/components/responses/ExternalGroupResponse'
+        "400":
+          $ref: '#/components/responses/ValidatorsException'
+        "500":
+          $ref: '#/components/responses/RetryableAttachmentStoreClientException'
+  /external/groups/join/{joinCode}:
+    post:
+      summary: "POST external/groups/join/{joinCode}"
+      operationId: "joinGroup"
+      parameters:
+        - $ref: '#/components/parameters/JoinCode'
+      responses:
+        "200":
+          $ref: '#/components/responses/ExternalGroupResponse'
+        "404":
+          $ref: '#/components/responses/MissingGroupException'
+        "409":
+          $ref: '#/components/responses/UserAlreadyInGroupException'
+  /external/groups/{groupId}:
+    get:
+      summary: "GET external/groups/{groupId}"
+      operationId: "getGroup"
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      responses:
+        "200":
+          $ref: '#/components/responses/ExternalGroupResponse'
+        "403":
+            $ref: '#/components/responses/UserWithoutGroupAccessException'
+        "404":
+          $ref: '#/components/responses/MissingGroupException'
+    put:
+      summary: "PUT external/groups/{groupId}"
+      operationId: "updateGroup"
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      requestBody:
+        $ref: '#/components/requestBodies/GroupUpdateRequest'
+      responses:
+        "200":
+          $ref: '#/components/responses/ExternalGroupResponse'
+        "400":
+          $ref: '#/components/responses/ValidatorsException'
+        "404":
+          $ref: '#/components/responses/MissingGroupException'
+        "500":
+          $ref: '#/components/responses/RetryableCurrencyManagerClientException'
+    delete:
+      summary: "DELETE external/groups/{groupId}"
+      operationId: "deleteGroup"
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          $ref: '#/components/responses/DeleteGroupValidationException'
+        "404":
+          $ref: '#/components/responses/MissingGroupException'
+        "500":
+            $ref: '#/components/responses/RetryableFinanceAdapterClientException'
+  /internal/members/{groupId}:
+    get:
+      summary: "GET internal/members/{groupId}"
+      operationId: "getMembers"
+      parameters:
+        - $ref: '#/components/parameters/GroupId'
+      responses:
+        "200":
+          $ref: '#/components/responses/GroupMembersResponse'
+        "404":
+          $ref: '#/components/responses/MissingGroupException'
+
+components:
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        example: "0ddfc155-ad49-47af-a787-af03b0be9a12"
+      description: The ID of the user.
+    GroupId:
+      name: groupId
+      in: path
+      required: true
+      schema:
+        type: string
+        example: "53f34d91-0172-4674-af73-813a666de1a9"
+      description: The ID of the group.
+    JoinCode:
+      name: joinCode
+      in: path
+      required: true
+      schema:
+        type: string
+        example: "abc123"
+      description: The join code of the group.
+
+  requestBodies:
+    GroupUpdateRequest:
+      description: Group update request.
+      required: true
+      content:
+        application/vnd.gem.internal.v1+json:
+          schema:
+            $ref: '#/components/schemas/GroupUpdateRequest'
+          examples:
+            exampleGroupUpdateRequest:
+              value:
+                name: "My awesome group"
+                groupCurrencies:
+                  - code: "USD"
+                  - code: "EUR"
+    GroupCreationRequest:
+      description: Group creation request.
+      required: true
+      content:
+        application/vnd.gem.internal.v1+json:
+          schema:
+            $ref: '#/components/schemas/GroupCreationRequest'
+          examples:
+            exampleGroupCreationRequest:
+              value:
+                name: "My awesome group"
+                groupCurrencies:
+                  - code: "USD"
+                  - code: "EUR"
+
+  responses:
+    GroupMembersResponse:
+      description: Group members response.
+      content:
+        application/vnd.gem.internal.v1+json:
+          schema:
+            $ref: '#/components/schemas/GroupMembersResponse'
+          examples:
+            exampleGroupMembersResponse:
+              value:
+                members:
+                  - id: "abcdefgh-ijkl-mnop-qrst-uvwxyz123456"
+                  - id: "fedcba98-7654-3210-lkjh-gfdsa654321"
+    ExternalGroupResponse:
+      description: Group response.
+      content:
+        application/vnd.gem.internal.v1+json:
+          schema:
+            $ref: '#/components/schemas/ExternalGroupResponse'
+          examples:
+            exampleExternalGroupResponse:
+              value:
+                groupId: "123e4567-e89b-12d3-a456-426614174000"
+                name: "My awesome group"
+                ownerId: "98765432-10fe-dcba-9876-543210fedcba"
+                members:
+                  - userId: "abcdefgh-ijkl-mnop-qrst-uvwxyz123456"
+                  - userId: "fedcba98-7654-3210-lkjh-gfdsa654321"
+                groupCurrencies:
+                  - code: "USD"
+                  - code: "EUR"
+                joinCode: "XJ48-KXL3"
+                attachmentId: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
+    ExternalUserGroupsResponse:
+      description: External user groups response.
+      content:
+        application/vnd.gem.external.v1+json:
+          schema:
+            $ref: '#/components/schemas/ExternalUserGroupsResponse'
+          examples:
+            exampleExternalUserGroupsResponse:
+              value:
+                groups:
+                  - groupId: "123e4567-e89b-12d3-a456-426614174000"
+                    ownerId: "98765432-10fe-dcba-9876-543210fedcba"
+                    name: "My awesome group"
+                    attachmentId: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
+                  - groupId: "abcdefgh-1234-5678-90ab-cdefghijklmn"
+                    ownerId: "fedcba98-7654-3210-lkjh-gfdsa654321"
+                    name: "Another great group"
+                    attachmentId: "ab12cd34-ef56-7890-12ab-cdefghijklmn"
+    InternalGroupResponse:
+      description: Internal group response.
+      content:
+        application/vnd.gem.internal.v1+json:
+          schema:
+            $ref: '#/components/schemas/InternalGroupResponse'
+          examples:
+            exampleInternalGroupResponse:
+              value:
+                groupId: "123e4567-e89b-12d3-a456-426614174000"
+                name: "My awesome group"
+                ownerId: "98765432-10fe-dcba-9876-543210fedcba"
+                members:
+                  - id: "abcdefgh-ijkl-mnop-qrst-uvwxyz123456"
+                    name: "John Doe"
+                  - id: "fedcba98-7654-3210-lkjh-gfdsa654321"
+                    name: "Jane Smith"
+                groupCurrencies:
+                  - currencyCode: "USD"
+                  - currencyCode: "EUR"
+                joinCode: "XJ48-KXL3"
+                attachmentId: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
+    InternalUserGroupsResponse:
+      description: Internal user groups response.
+      content:
+        application/vnd.gem.internal.v1+json:
+          schema:
+            $ref: '#/components/schemas/InternalUserGroupsResponse'
+          examples:
+            exampleInternalUserGroupsResponse:
+              value:
+                groups:
+                  - groupId: "123e4567-e89b-12d3-a456-426614174000"
+                  - groupId: "98765432-10fe-dcba-9876-543210fedcba"
+    ValidatorsException:
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleValidatorsException:
+              value:
+                errors:
+                  - code: "ValidatorsException"
+                    details: "ValidatorsException"
+                    message: "Failed validations: ${failedValidations.joinToString(", ")}"
+                    userMessage: "Failed validations: ${failedValidations.joinToString(", ")}"
+    DeleteGroupValidationException:
+      description: Validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleDeleteGroupValidationException:
+              value:
+                errors:
+                  - code: "DeleteGroupValidationException"
+                    details: "DeleteGroupValidationException"
+                    message: "Failed validations: ${failedValidations.joinToString(", ")}"
+                    userMessage: "Failed validations: ${failedValidations.joinToString(", ")}"
+    MissingGroupException:
+      description: Group not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleMissingGroupException:
+              value:
+                errors:
+                  - code: "MissingGroupException"
+                    details: "MissingGroupException"
+                    message: "Failed to find group with joinCode:$joinCode"
+                    userMessage: "Failed to find group with joinCode:$joinCode"
+    UserAlreadyInGroupException:
+      description: User is already in the group.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleUserAlreadyInGroupException:
+              value:
+                errors:
+                  - code: "UserAlreadyInGroupException"
+                    details: "UserAlreadyInGroupException"
+                    message: "User with id:$userId is already in group with joinCode:$groupId"
+                    userMessage: "User with id:$userId is already in group with joinCode:$groupId"
+    UserWithoutGroupAccessException:
+      description: User is not a member of the group.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleUserWithoutGroupAccessException:
+              value:
+                errors:
+                  - code: "UserWithoutGroupAccessException"
+                    details: "UserWithoutGroupAccessException"
+                    message: "User with id:$userId is not a member of the group"
+                    userMessage: "User with id:$userId is not a member of the group"
+    CurrencyManagerClientException:
+      description: Client side exception while trying to retrieve available currencies.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleCurrencyManagerClientException:
+              value:
+                errors:
+                  - code: "CurrencyManagerClientException"
+                    details: "CurrencyManagerClientException"
+                    message: "Client side exception while trying to retrieve available currencies"
+                    userMessage: "Client side exception while trying to retrieve available currencies"
+    RetryableCurrencyManagerClientException:
+      description: Server side exception while trying to retrieve available currencies.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleRetryableCurrencyManagerClientException:
+              value:
+                errors:
+                  - code: "RetryableCurrencyManagerClientException"
+                    details: "RetryableCurrencyManagerClientException"
+                    message: "Server side exception while trying to retrieve available currencies"
+                    userMessage: "Server side exception while trying to retrieve available currencies"
+    AttachmentStoreClientException:
+      description: Client side exception while trying to retrieve init group attachment.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleAttachmentStoreClientException:
+              value:
+                errors:
+                  - code: "AttachmentStoreClientException"
+                    details: "AttachmentStoreClientException"
+                    message: "Client side exception while trying to retrieve init group attachment"
+                    userMessage: "Client side exception while trying to retrieve init group attachment"
+    RetryableAttachmentStoreClientException:
+      description: Server side exception while trying to retrieve init group attachment.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleRetryableAttachmentStoreClientException:
+              value:
+                errors:
+                  - code: "RetryableAttachmentStoreClientException"
+                    details: "RetryableAttachmentStoreClientException"
+                    message: "Server side exception while trying to retrieve init group attachment"
+                    userMessage: "Server side exception while trying to retrieve init group attachment"
+    FinanceAdapterClientException:
+      description: Client side exception while trying to retrieve group balance.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleFinanceAdapterClientException:
+              value:
+                errors:
+                  - code: "FinanceAdapterClientException"
+                    details: "FinanceAdapterClientException"
+                    message: "Client side exception while trying to retrieve group balance"
+                    userMessage: "Client side exception while trying to retrieve group balance"
+    RetryableFinanceAdapterClientException:
+      description: Server side exception while trying to retrieve group balance.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SimpleErrorsHolder'
+          examples:
+            exampleRetryableFinanceAdapterClientException:
+              value:
+                errors:
+                  - code: "RetryableFinanceAdapterClientException"
+                    details: "RetryableFinanceAdapterClientException"
+                    message: "Server side exception while trying to retrieve group balance"
+                    userMessage: "Server side exception while trying to retrieve group balance"
+
+  schemas:
+    GroupMembersResponse:
+      type: object
+      properties:
+        members:
+          type: array
+          description: A list of group members.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The ID of the member.
+                example: "abcdefgh-ijkl-mnop-qrst-uvwxyz123456"
+    GroupUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the group.
+          example: "My awesome group"
+        groupCurrencies:
+          type: array
+          description: A list of currencies to be used in the group.
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: The currency code.
+                example: "USD"
+    ExternalGroupResponse:
+      type: object
+      properties:
+        groupId:
+          type: string
+          description: The ID of the group.
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          description: The name of the group.
+          example: "My awesome group"
+        ownerId:
+          type: string
+          description: The ID of the group owner.
+          example: "98765432-10fe-dcba-9876-543210fedcba"
+        members:
+          type: array
+          description: A list of group members.
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+                description: The ID of the member.
+                example: "abcdefgh-ijkl-mnop-qrst-uvwxyz123456"
+        groupCurrencies:
+          type: array
+          description: A list of currencies used in the group.
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: The currency code.
+                example: "USD"
+        joinCode:
+          type: string
+          description: The join code for the group.
+          example: "XJ48-KXL3"
+        attachmentId:
+          type: string
+          description: The ID of the attachment associated with the group.
+          example: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
+    GroupCreationRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the group.
+          example: "My awesome group"
+        groupCurrencies:
+          type: array
+          description: A list of currencies to be used in the group.
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                description: The currency code.
+                example: "USD"
+    ExternalUserGroupsResponse:
+      type: object
+      properties:
+        groups:
+          type: array
+          description: A list of user groups.
+          items:
+            type: object
+            properties:
+              groupId:
+                type: string
+                description: The ID of the group.
+                example: "123e4567-e89b-12d3-a456-426614174000"
+              ownerId:
+                type: string
+                description: The ID of the group owner.
+                example: "98765432-10fe-dcba-9876-543210fedcba"
+              name:
+                type: string
+                description: The name of the group.
+                example: "My awesome group"
+              attachmentId:
+                type: string
+                description: The ID of the attachment associated with the group.
+                example: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
+    InternalGroupResponse:
+      type: object
+      properties:
+        groupId:
+          type: string
+          description: The ID of the group.
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          type: string
+          description: The name of the group.
+          example: "My awesome group"
+        ownerId:
+          type: string
+          description: The ID of the group owner.
+          example: "98765432-10fe-dcba-9876-543210fedcba"
+        members:
+          type: array
+          description: A list of group members.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: The ID of the member.
+                example: "abcdefgh-ijkl-mnop-qrst-uvwxyz123456"
+              name:
+                type: string
+                description: The name of the member.
+                example: "John Doe"
+        groupCurrencies:
+          type: array
+          description: A list of currencies used in the group.
+          items:
+            type: object
+            properties:
+              currencyCode:
+                type: string
+                description: The currency code.
+                example: "USD"
+        joinCode:
+          type: string
+          description: The join code for the group.
+          example: "XJ48-KXL3"
+        attachmentId:
+          type: string
+          description: The ID of the attachment associated with the group.
+          example: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
+    InternalUserGroupsResponse:
+      type: object
+      properties:
+        groups:
+          type: array
+          description: A list of user groups.
+          items:
+            type: object
+            properties:
+              groupId:
+                type: string
+                description: The ID of the group.
+                example: "123e4567-e89b-12d3-a456-426614174000"
+    SimpleErrorsHolder:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+                nullable: true
+                description: Error code.
+                example: "INVALID_VALUE"
+              message:
+                type: string
+                nullable: true
+                description: Error message.
+                example: "The provided value is invalid."
+              details:
+                type: string
+                nullable: true
+                description: Additional error details.
+                example: "The field 'email' must contain a valid email address."
+              path:
+                type: string
+                nullable: true
+                description: The API path related to the error.
+                example: "/external/users/{userId}/attachments/{attachmentId}"
+              userMessage:
+                type: string
+                nullable: true
+                description: A user-friendly error message.
+                example: "Please provide a valid email address."
