@@ -232,7 +232,7 @@ components:
                 groupCurrencies:
                   - code: "USD"
                   - code: "EUR"
-                joinCode: "XJ48-KXL3"
+                joinCode: "abc123"
                 attachmentId: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
     ExternalUserGroupsResponse:
       description: External user groups response.
@@ -272,7 +272,7 @@ components:
                 groupCurrencies:
                   - currencyCode: "USD"
                   - currencyCode: "EUR"
-                joinCode: "XJ48-KXL3"
+                joinCode: "abc123"
                 attachmentId: "f86d7bc5-8421-4f49-a867-dbe8f76c5200"
     InternalUserGroupsResponse:
       description: Internal user groups response.
@@ -510,7 +510,7 @@ components:
         joinCode:
           type: string
           description: The join code for the group.
-          example: "XJ48-KXL3"
+          example: "abc123"
         attachmentId:
           type: string
           description: The ID of the attachment associated with the group.
@@ -599,7 +599,7 @@ components:
         joinCode:
           type: string
           description: The join code for the group.
-          example: "XJ48-KXL3"
+          example: "abc123"
         attachmentId:
           type: string
           description: The ID of the attachment associated with the group.
