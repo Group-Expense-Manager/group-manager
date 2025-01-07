@@ -7,8 +7,11 @@ info:
 paths:
   /internal/groups/users/{userId}:
     get:
-      summary: "GET internal/groups/users/{userId}"
-      operationId: "getGroups"
+      tags:
+        - Internal Group
+      summary: "Get groups for a user"
+      description: "Retrieves all groups associated with the given user ID."
+      operationId: "getGroupsForUser"
       parameters:
         - $ref: '#/components/parameters/UserId'
       responses:
@@ -17,8 +20,11 @@ paths:
 
   /internal/groups/{groupId}:
     get:
-      summary: "GET internal/groups/{groupId}"
-      operationId: "getGroup"
+      tags:
+        - Internal Group
+      summary: "Retrieve a group"
+      description: "Retrieves the group with the specified group ID."
+      operationId: "getGroupById"
       parameters:
         - $ref: '#/components/parameters/GroupId'
       responses:
@@ -26,15 +32,22 @@ paths:
           $ref: '#/components/responses/InternalGroupResponse'
         "404":
           $ref: '#/components/responses/MissingGroupException'
+
   /external/groups:
     get:
-      summary: "GET external/groups"
-      operationId: "getGroups"
+      tags:
+        - External Group
+      summary: "Get groups for a user"
+      description: "Retrieves all groups associated with the current user."
+      operationId: "getCurrentUserGroups"
       responses:
         "200":
           $ref: '#/components/responses/ExternalUserGroupsResponse'
     post:
-      summary: "POST external/groups"
+      tags:
+        - External Group
+      summary: "Create a new group"
+      description: "Creates a new group with the provided details."
       operationId: "createGroup"
       requestBody:
         $ref: '#/components/requestBodies/GroupCreationRequest'
@@ -45,10 +58,14 @@ paths:
           $ref: '#/components/responses/ValidatorsException'
         "500":
           $ref: '#/components/responses/RetryableAttachmentStoreClientException'
+
   /external/groups/join/{joinCode}:
     post:
-      summary: "POST external/groups/join/{joinCode}"
-      operationId: "joinGroup"
+      tags:
+        - External Group
+      summary: "Join a group"
+      description: "Joins a group using the provided join code."
+      operationId: "joinGroupByCode"
       parameters:
         - $ref: '#/components/parameters/JoinCode'
       responses:
@@ -58,22 +75,29 @@ paths:
           $ref: '#/components/responses/MissingGroupException'
         "409":
           $ref: '#/components/responses/UserAlreadyInGroupException'
+
   /external/groups/{groupId}:
     get:
-      summary: "GET external/groups/{groupId}"
-      operationId: "getGroup"
+      tags:
+        - External Group
+      summary: "Retrieve a group"
+      description: "Retrieves the group with the specified group ID."
+      operationId: "getGroupById"
       parameters:
         - $ref: '#/components/parameters/GroupId'
       responses:
         "200":
           $ref: '#/components/responses/ExternalGroupResponse'
         "403":
-            $ref: '#/components/responses/UserWithoutGroupAccessException'
+          $ref: '#/components/responses/UserWithoutGroupAccessException'
         "404":
           $ref: '#/components/responses/MissingGroupException'
     put:
-      summary: "PUT external/groups/{groupId}"
-      operationId: "updateGroup"
+      tags:
+        - External Group
+      summary: "Update a group"
+      description: "Updates the group with the specified group ID using the provided details."
+      operationId: "updateGroupById"
       parameters:
         - $ref: '#/components/parameters/GroupId'
       requestBody:
@@ -88,8 +112,11 @@ paths:
         "500":
           $ref: '#/components/responses/RetryableCurrencyManagerClientException'
     delete:
-      summary: "DELETE external/groups/{groupId}"
-      operationId: "deleteGroup"
+      tags:
+        - External Group
+      summary: "Delete a group"
+      description: "Deletes the group with the specified group ID."
+      operationId: "deleteGroupById"
       parameters:
         - $ref: '#/components/parameters/GroupId'
       responses:
@@ -100,11 +127,15 @@ paths:
         "404":
           $ref: '#/components/responses/MissingGroupException'
         "500":
-            $ref: '#/components/responses/RetryableFinanceAdapterClientException'
+          $ref: '#/components/responses/RetryableFinanceAdapterClientException'
+
   /internal/members/{groupId}:
     get:
-      summary: "GET internal/members/{groupId}"
-      operationId: "getMembers"
+      tags:
+        - Internal Members
+      summary: "Get members of a group"
+      description: "Retrieves all members of the group with the specified group ID."
+      operationId: "getGroupMembers"
       parameters:
         - $ref: '#/components/parameters/GroupId'
       responses:
@@ -267,8 +298,8 @@ components:
                 errors:
                   - code: "ValidatorsException"
                     details: "ValidatorsException"
-                    message: "Failed validations: ${failedValidations.joinToString(", ")}"
-                    userMessage: "Failed validations: ${failedValidations.joinToString(", ")}"
+                    message: "Failed validations: ${failedValidations}"
+                    userMessage: "Failed validations: ${failedValidations}"
     DeleteGroupValidationException:
       description: Validation failed.
       content:
@@ -281,8 +312,8 @@ components:
                 errors:
                   - code: "DeleteGroupValidationException"
                     details: "DeleteGroupValidationException"
-                    message: "Failed validations: ${failedValidations.joinToString(", ")}"
-                    userMessage: "Failed validations: ${failedValidations.joinToString(", ")}"
+                    message: "Failed validations: ${failedValidations}"
+                    userMessage: "Failed validations: ${failedValidations}"
     MissingGroupException:
       description: Group not found.
       content:
