@@ -87,9 +87,9 @@ class ExternalGroupController(
         @GemUserId userId: String,
         @PathVariable groupId: String,
         @Valid @RequestBody
-        groupCreationRequest: GroupUpdateRequest,
+        groupUpdateRequest: GroupUpdateRequest,
     ): ExternalGroupResponse {
-        return groupService.updateGroup(groupCreationRequest.toGroupUpdate(groupId), userId)
+        return groupService.updateGroup(groupUpdateRequest.toGroupUpdate(groupId), userId)
             .toExternalGroupResponse()
     }
 }
